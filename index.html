@@ -24,13 +24,14 @@
       color: var(--text);
       overflow:hidden;
 
-      /* ✅ Background photo: upload bg.jpg to same repo folder as index.html */
+      /* ✅ Optional couple-photo background: upload bg.jpg next to index.html */
       background-image:
         linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.70)),
         url("bg.jpg");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-color:#0b0b10;
     }
 
     .wrap{
@@ -65,7 +66,6 @@
       line-height: 1.4;
     }
 
-    /* Play area */
     .stage{
       position:relative;
       height: 260px;
@@ -73,9 +73,6 @@
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.18);
       overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
     }
 
     .btn{
@@ -91,6 +88,7 @@
       user-select:none;
       letter-spacing: 0.2px;
       position:absolute;
+      will-change: left, top;
     }
     .btn:active{ transform: scale(0.98); }
 
@@ -106,26 +104,22 @@
     .success{
       display:none;
       margin-top: 16px;
-      padding: 12px 12px 0;
-      color: rgba(255,255,255,0.92);
+      padding-top: 6px;
     }
     .success .big{ font-size: 46px; }
-    .success h2{
-      margin: 8px 0 6px;
-      font-size: 28px;
-    }
+    .success h2{ margin: 8px 0 6px; font-size: 28px; }
     .success p{
       margin: 0;
       color: rgba(255,255,255,0.82);
       font-size: 15.5px;
       line-height: 1.5;
     }
+
     .hint{
       margin-top: 14px;
       font-size: 13.5px;
       color: rgba(255,255,255,0.72);
     }
-
     .footer{
       margin-top: 14px;
       font-size: 12px;
@@ -138,7 +132,7 @@
   <div class="wrap">
     <main class="card">
       <h1>Will you be my valentine forever, bubu? 💘</h1>
-      <p class="sub">No pressure… but also… there’s only one correct answer 😌</p>
+      <p class="sub">Okay listen… you can try “No”, but it’s kinda shy 😌</p>
 
       <section class="stage" id="stage" aria-label="Valentine choice area">
         <button class="btn" id="yesBtn">Yes 💚</button>
@@ -151,8 +145,8 @@
         <p>Okay bubu… now you’re officially stuck with me 😌❤️</p>
       </div>
 
-      <div class="hint" id="hint">Try hovering on “No” 😏</div>
-      <div class="footer">Tip: If you don’t want a photo background, remove `url("bg.jpg")` from CSS.</div>
+      <div class="hint" id="hint">Hover on “No” 😏</div>
+      <div class="footer">If you don’t want a photo background, remove `url("bg.jpg")` in CSS.</div>
     </main>
   </div>
 
@@ -163,119 +157,140 @@
     const success = document.getElementById("success");
     const hint = document.getElementById("hint");
 
-    // Keep buttons within bounds and ensure No never overlaps Yes
+    const PAD = 12;         // padding inside stage
+    const SAFE_GAP = 14;    // extra gap between YES and NO so they never overlap/touch
+
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    function rect(el){ return el.getBoundingClientRect(); }
-
-    function placeInitial() {
-      // Place Yes left-ish, No right-ish
-      const s = rect(stage);
-      const yW = yesBtn.offsetWidth, yH = yesBtn.offsetHeight;
-      const nW = noBtn.offsetWidth,  nH = noBtn.offsetHeight;
-
-      const midY = s.height / 2;
-      setPos(yesBtn, s.width * 0.35 - yW/2, midY - yH/2);
-      setPos(noBtn,  s.width * 0.65 - nW/2, midY - nH/2);
-    }
-
     function setPos(el, x, y){
-      // position relative to stage
-      const s = rect(stage);
+      const s = stage.getBoundingClientRect();
       const w = el.offsetWidth, h = el.offsetHeight;
-      const pad = 12;
-      const nx = clamp(x, pad, s.width  - w - pad);
-      const ny = clamp(y, pad, s.height - h - pad);
+      const nx = clamp(x, PAD, s.width  - w - PAD);
+      const ny = clamp(y, PAD, s.height - h - PAD);
       el.style.left = nx + "px";
       el.style.top  = ny + "px";
+      return { x: nx, y: ny, w, h };
     }
 
-    function distance(ax, ay, bx, by){
-      const dx = ax - bx, dy = ay - by;
-      return Math.sqrt(dx*dx + dy*dy);
+    function getRectLocal(el){
+      return {
+        x: parseFloat(el.style.left || "0"),
+        y: parseFloat(el.style.top  || "0"),
+        w: el.offsetWidth,
+        h: el.offsetHeight
+      };
     }
 
-    function getCenter(el){
-      const w = el.offsetWidth, h = el.offsetHeight;
-      const x = parseFloat(el.style.left || "0") + w/2;
-      const y = parseFloat(el.style.top  || "0") + h/2;
-      return {x, y, w, h};
+    function intersects(a, b, gap){
+      return !(
+        a.x + a.w + gap <= b.x ||
+        b.x + b.w + gap <= a.x ||
+        a.y + a.h + gap <= b.y ||
+        b.y + b.h + gap <= a.y
+      );
     }
 
-    function moveNoAway() {
-      const s = rect(stage);
-      const pad = 12;
+    // ✅ YES stays fixed: we place it once and never move it again (even on resize we re-place YES to same spot)
+    let yesFixed = { x: 0, y: 0, w: 0, h: 0 };
 
-      const yC = getCenter(yesBtn);
+    function placeYesFixed(){
+      const s = stage.getBoundingClientRect();
+      const yW = yesBtn.offsetWidth, yH = yesBtn.offsetHeight;
+
+      // fixed spot: center-left
+      const x = s.width * 0.35 - yW/2;
+      const y = s.height * 0.52 - yH/2;
+
+      yesFixed = setPos(yesBtn, x, y);
+    }
+
+    function placeNoInitial(){
+      const s = stage.getBoundingClientRect();
       const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
 
-      // Minimum distance between centers so they don't overlap or get too close
-      const minDist = Math.max(yC.w, nW) * 0.9;
+      // try a default position on right side; if overlaps, we'll find a safe random
+      const x = s.width * 0.65 - nW/2;
+      const y = s.height * 0.52 - nH/2;
+      setPos(noBtn, x, y);
 
-      // Try multiple random positions; pick the farthest valid one
+      if (intersects(getRectLocal(noBtn), yesFixed, SAFE_GAP)) moveNoAway(true);
+    }
+
+    function randomSafeSpot(){
+      const s = stage.getBoundingClientRect();
+      const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
+
+      // Try multiple times to find a non-overlapping spot
       let best = null;
+      for (let i = 0; i < 40; i++){
+        const x = PAD + Math.random() * (s.width  - nW - PAD*2);
+        const y = PAD + Math.random() * (s.height - nH - PAD*2);
 
-      for (let i = 0; i < 25; i++){
-        const x = pad + Math.random() * (s.width  - nW - pad*2);
-        const y = pad + Math.random() * (s.height - nH - pad*2);
-
-        const cX = x + nW/2;
-        const cY = y + nH/2;
-
-        const d = distance(cX, cY, yC.x, yC.y);
-
-        if (d >= minDist){
-          if (!best || d > best.d){
-            best = {x, y, d};
-          }
+        const candidate = { x, y, w: nW, h: nH };
+        if (!intersects(candidate, yesFixed, SAFE_GAP)){
+          // prefer farthest from YES center (feels nicer)
+          const cX = x + nW/2, cY = y + nH/2;
+          const yCX = yesFixed.x + yesFixed.w/2, yCY = yesFixed.y + yesFixed.h/2;
+          const d = (cX - yCX) ** 2 + (cY - yCY) ** 2;
+          if (!best || d > best.d) best = { x, y, d };
         }
       }
 
-      // If we didn't find a perfect spot, still move to the farthest we found (even if close),
-      // but it will still be clamped inside the stage.
+      // fallback: force it to the far right or far left opposite of YES
       if (!best){
-        // place opposite side of Yes as a fallback
-        const fallbackX = (yC.x < s.width/2) ? (s.width - nW - pad) : pad;
-        const fallbackY = pad + Math.random() * (s.height - nH - pad*2);
-        best = {x: fallbackX, y: fallbackY, d: 0};
+        const rightX = s.width - nW - PAD;
+        const leftX  = PAD;
+        const yRand  = PAD + Math.random() * (s.height - nH - PAD*2);
+
+        // choose the side that doesn't overlap; if both overlap (rare), still pick far side
+        const candR = { x: rightX, y: yRand, w: nW, h: nH };
+        const candL = { x: leftX,  y: yRand, w: nW, h: nH };
+
+        if (!intersects(candR, yesFixed, SAFE_GAP)) best = { x: rightX, y: yRand };
+        else if (!intersects(candL, yesFixed, SAFE_GAP)) best = { x: leftX, y: yRand };
+        else best = { x: rightX, y: yRand };
       }
 
-      setPos(noBtn, best.x, best.y);
-      hint.textContent = "Nope 😌";
+      return best;
     }
 
-    // Success
+    function moveNoAway(isFirst=false){
+      const spot = randomSafeSpot();
+      setPos(noBtn, spot.x, spot.y);
+      hint.textContent = isFirst ? "Okay okay… try now 😌" : "Nope 😌";
+    }
+
+    // YES click -> success
     yesBtn.addEventListener("click", () => {
       success.style.display = "block";
       hint.textContent = "Best choice 💘";
-      // disable No movement after success if you want
-      noBtn.style.pointerEvents = "none";
+      noBtn.style.pointerEvents = "none"; // optional: stop running once accepted
     });
 
-    // Move No on hover (desktop) + touch (mobile)
-    noBtn.addEventListener("mouseenter", moveNoAway);
-    noBtn.addEventListener("mouseover", moveNoAway);
-    noBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      moveNoAway();
-    }, { passive:false });
+    // NO runs away on hover/touch/click
+    noBtn.addEventListener("mouseenter", () => moveNoAway(false));
+    noBtn.addEventListener("mouseover",  () => moveNoAway(false));
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoAway(false); }, { passive:false });
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoAway(false); });
 
-    // Also move No if they try to click it
-    noBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      moveNoAway();
-    });
-
-    // Initial layout after DOM paints
+    // Layout once ready
     window.addEventListener("load", () => {
-      placeInitial();
-      // in case fonts change sizes slightly
-      setTimeout(placeInitial, 80);
+      placeYesFixed();
+      placeNoInitial();
+      // small reflow safety for font loading
+      setTimeout(() => { placeYesFixed(); placeNoInitial(); }, 80);
     });
 
-    // Keep positions sane on resize
+    // Keep YES fixed in same relative spot on resize; re-place NO safely
     window.addEventListener("resize", () => {
-      placeInitial();
+      placeYesFixed();
+      // if NO now overlaps due to resize, move it away
+      if (intersects(getRectLocal(noBtn), yesFixed, SAFE_GAP)) moveNoAway(true);
+      else {
+        // clamp NO into bounds if needed
+        const n = getRectLocal(noBtn);
+        setPos(noBtn, n.x, n.y);
+      }
     });
   </script>
 </body>
