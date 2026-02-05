@@ -7,172 +7,276 @@
 
   <style>
     :root{
-      --glass: rgba(255,255,255,0.16);
-      --border: rgba(255,255,255,0.22);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.78);
+      /* ✅ OPTIONAL background image:
+         1) Upload bg.jpg beside index.html
+         2) Keep this line as-is
+         - OR disable background by setting it to: none
+      */
+      --bg-img: none; /* change to none to disable */
+
+      --card: rgba(255,255,255,0.75);
+      --text: #1f1f1f;
       --yes: #22c55e;
       --no: #ef4444;
-      --shadow: 0 20px 70px rgba(0,0,0,0.45);
+      --shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
-    *{ box-sizing:border-box; }
 
-    body{
-      margin:0;
-      min-height:100vh;
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color: var(--text);
-      overflow:hidden;
+      overflow: hidden;
 
-      /* ✅ Optional couple-photo background: upload bg.jpg next to index.html */
-      background-image:
-        linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.70)),
-        url("bg.jpg");
+      /* Romantic gradient base */
+      background:
+        radial-gradient(1200px 800px at 20% 10%, #ffdde1, transparent 60%),
+        radial-gradient(1200px 800px at 80% 90%, #ee9ca7, transparent 60%),
+        linear-gradient(135deg, #fff5f7, #ffe4e6);
+      position: relative;
+    }
+
+    /* Optional background photo layer (behind gradients, softly visible) */
+    .bgPhoto {
+      position: fixed;
+      inset: 0;
+      background-image: var(--bg-img);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-color:#0b0b10;
+      opacity: 0.28;         /* soft */
+      filter: blur(2px) saturate(1.05);
+      transform: scale(1.02);
+      pointer-events: none;
+      z-index: 0;
+      display: block;
+    }
+    /* If bg disabled -> hide layer */
+    .bgOff { display: none; }
+
+    /* Extra romantic overlay glow */
+    .softOverlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(900px 600px at 50% 20%, rgba(255,105,180,0.18), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,45,85,0.14), transparent 60%);
+      pointer-events: none;
+      z-index: 1;
     }
 
-    .wrap{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding: 18px;
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      filter: blur(0.2px);
+      z-index: 2;
     }
 
-    .card{
-      width:min(760px, calc(100vw - 28px));
+    .heart {
+      position: absolute;
+      font-size: 22px;
+      animation: floatUp linear infinite;
+      transform: translateY(120vh);
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(120vh) translateX(0) rotate(0deg); }
+      to   { transform: translateY(-20vh) translateX(40px) rotate(18deg); }
+    }
+
+    .card {
+      width: min(760px, calc(100vw - 32px));
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.7);
       border-radius: 28px;
-      background: var(--glass);
-      border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      padding: 28px 22px;
-      text-align:center;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 3;
     }
 
-    h1{
+    .title {
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
       margin: 0 0 10px;
-      font-size: clamp(28px, 4vw, 46px);
-      letter-spacing:-0.02em;
-      line-height:1.06;
-      text-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      letter-spacing: -0.02em;
+      text-align: center;
     }
-    .sub{
+
+    .subtitle {
       margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 15.5px;
-      line-height: 1.4;
+      text-align: center;
+      font-size: 16px;
+      opacity: 0.85;
     }
 
-    .stage{
-      position:relative;
-      height: 260px;
+    .stage {
+      position: relative;
+      height: 250px;
       border-radius: 22px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
-      overflow:hidden;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.7);
+      overflow: hidden;
     }
 
-    .btn{
-      appearance:none;
-      border:0;
+    button {
+      appearance: none;
+      border: 0;
       border-radius: 999px;
-      padding: 14px 24px;
+      padding: 14px 22px;
       font-size: 18px;
       font-weight: 800;
-      cursor:pointer;
-      box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+      cursor: pointer;
       transition: transform 0.12s ease;
-      user-select:none;
-      letter-spacing: 0.2px;
-      position:absolute;
-      will-change: left, top;
-    }
-    .btn:active{ transform: scale(0.98); }
-
-    #yesBtn{
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color:white;
-    }
-    #noBtn{
-      background: linear-gradient(135deg, #ff4d6d, #ef4444);
-      color:white;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.14);
+      user-select: none;
+      position: absolute;
+      white-space: nowrap;
     }
 
-    .success{
-      display:none;
-      margin-top: 16px;
-      padding-top: 6px;
+    button:active { transform: scale(0.98); }
+
+    .yes { background: var(--yes); color: white; }
+    .no  { background: var(--no);  color: white; }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 14px 0 0;
     }
-    .success .big{ font-size: 46px; }
-    .success h2{ margin: 8px 0 6px; font-size: 28px; }
-    .success p{
+    .success h2 {
+      margin: 10px 0 6px;
+      font-size: 28px;
+    }
+    .success p {
       margin: 0;
-      color: rgba(255,255,255,0.82);
-      font-size: 15.5px;
-      line-height: 1.5;
+      opacity: 0.9;
+      font-size: 16px;
     }
 
-    .hint{
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
       margin-top: 14px;
-      font-size: 13.5px;
-      color: rgba(255,255,255,0.72);
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.35);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
     }
-    .footer{
+
+    .hint {
       margin-top: 14px;
+      text-align: center;
+      opacity: 0.75;
+      font-size: 14px;
+    }
+
+    .tiny {
+      margin-top: 10px;
       font-size: 12px;
-      color: rgba(255,255,255,0.55);
+      opacity: 0.6;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <main class="card">
-      <h1>Will you be my valentine forever, bubu? 💘</h1>
-      <p class="sub">Okay listen… you can try “No”, but it’s kinda shy 😌</p>
+  <div class="bgPhoto" id="bgPhoto"></div>
+  <div class="softOverlay"></div>
+  <div class="hearts" id="hearts"></div>
 
-      <section class="stage" id="stage" aria-label="Valentine choice area">
-        <button class="btn" id="yesBtn">Yes 💚</button>
-        <button class="btn" id="noBtn">No 🙃</button>
-      </section>
+  <main class="card">
+    <h1 class="title">Will you be my valentine forever, <span aria-label="bubu">bubu</span>? 💘</h1>
+    <p class="subtitle">Pick wisely… because “No” is kinda shy 😌</p>
+
+    <section class="stage" id="stage" aria-label="Valentine choice area">
+      <button class="yes" id="yesBtn">Yes 💚</button>
+      <button class="no" id="noBtn">No 🙃</button>
 
       <div class="success" id="success">
-        <div class="big">🥹💘</div>
-        <h2>Yayyy! It’s a forever yes.</h2>
-        <p>Okay bubu… now you’re officially stuck with me 😌❤️</p>
+        <div style="font-size:48px;">🥹💘✨</div>
+        <h2>Yayyyyy! It’s a forever date 💍</h2>
+        <p>Okay bubu, now you’re officially stuck with me. 😌❤️</p>
+        <div class="badge">✅ Forever locked in</div>
       </div>
+    </section>
 
-      <div class="hint" id="hint">Hover on “No” 😏</div>
-      <div class="footer">If you don’t want a photo background, remove `url("bg.jpg")` in CSS.</div>
-    </main>
-  </div>
+    <div class="hint" id="hint">Try hovering on “No” 👀</div>
+    <div class="tiny" id="tiny">No attempts blocked: 0 😌</div>
+  </main>
 
   <script>
+    // ----- Optional background photo toggle -----
+    // If you set --bg-img: none in CSS, we hide the bg layer to avoid blank overlay.
+    (function(){
+      const bg = document.getElementById("bgPhoto");
+      const bgImg = getComputedStyle(document.documentElement).getPropertyValue("--bg-img").trim();
+      if (!bgImg || bgImg === "none") bg.classList.add("bgOff");
+    })();
+
+    // ----- Floating hearts -----
+    const heartsWrap = document.getElementById("hearts");
+    const heartEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨"];
+    function makeHeart(){
+      const el = document.createElement("div");
+      el.className = "heart";
+      el.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.animationDuration = (7 + Math.random() * 10) + "s";
+      el.style.fontSize = (16 + Math.random() * 22) + "px";
+      el.style.opacity = (0.22 + Math.random() * 0.55);
+      el.style.animationDelay = (-Math.random() * 10) + "s";
+      heartsWrap.appendChild(el);
+      setTimeout(() => el.remove(), 20000);
+    }
+    for (let i = 0; i < 26; i++) makeHeart();
+    setInterval(makeHeart, 650);
+
+    // ----- Button logic -----
     const stage = document.getElementById("stage");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn  = document.getElementById("noBtn");
     const success = document.getElementById("success");
     const hint = document.getElementById("hint");
+    const tiny = document.getElementById("tiny");
 
-    const PAD = 12;         // padding inside stage
-    const SAFE_GAP = 14;    // extra gap between YES and NO so they never overlap/touch
+    const PAD = 12;
+    const GAP = 18; // safety gap so NO never overlaps YES
+    let blocks = 0;
+
+    // Alternate sides: true => place NO on right of YES, false => left
+    let nextRight = true;
+
+    const cuteMsgs = [
+      "Are you sure? 🥺",
+      "Think again 😭",
+      "Pls no 🙈",
+      "Bubu… really? 🥹",
+      "Last chance 😌"
+    ];
+    let msgTimer = null;
 
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
     function setPos(el, x, y){
       const s = stage.getBoundingClientRect();
       const w = el.offsetWidth, h = el.offsetHeight;
-      const nx = clamp(x, PAD, s.width  - w - PAD);
-      const ny = clamp(y, PAD, s.height - h - PAD);
-      el.style.left = nx + "px";
-      el.style.top  = ny + "px";
-      return { x: nx, y: ny, w, h };
+      el.style.left = clamp(x, PAD, s.width  - w - PAD) + "px";
+      el.style.top  = clamp(y, PAD, s.height - h - PAD) + "px";
     }
 
-    function getRectLocal(el){
+    function localRect(el){
       return {
         x: parseFloat(el.style.left || "0"),
         y: parseFloat(el.style.top  || "0"),
@@ -181,117 +285,136 @@
       };
     }
 
-    function intersects(a, b, gap){
+    function overlaps(a, b){
       return !(
-        a.x + a.w + gap <= b.x ||
-        b.x + b.w + gap <= a.x ||
-        a.y + a.h + gap <= b.y ||
-        b.y + b.h + gap <= a.y
+        a.x + a.w + GAP <= b.x ||
+        b.x + b.w + GAP <= a.x ||
+        a.y + a.h + GAP <= b.y ||
+        b.y + b.h + GAP <= a.y
       );
     }
-
-    // ✅ YES stays fixed: we place it once and never move it again (even on resize we re-place YES to same spot)
-    let yesFixed = { x: 0, y: 0, w: 0, h: 0 };
 
     function placeYesFixed(){
       const s = stage.getBoundingClientRect();
       const yW = yesBtn.offsetWidth, yH = yesBtn.offsetHeight;
-
-      // fixed spot: center-left
-      const x = s.width * 0.35 - yW/2;
+      // Fixed spot: slightly left of center
+      const x = s.width * 0.38 - yW/2;
       const y = s.height * 0.52 - yH/2;
-
-      yesFixed = setPos(yesBtn, x, y);
+      setPos(yesBtn, x, y);
     }
 
-    function placeNoInitial(){
+    function pickFarSpot(sideRight){
       const s = stage.getBoundingClientRect();
+      const y = localRect(yesBtn);
       const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
 
-      // try a default position on right side; if overlaps, we'll find a safe random
-      const x = s.width * 0.65 - nW/2;
-      const y = s.height * 0.52 - nH/2;
-      setPos(noBtn, x, y);
+      // Define a target x range based on side (farther from YES)
+      const rightMin = y.x + y.w + 80;                // push far right
+      const rightMax = s.width - nW - PAD;
 
-      if (intersects(getRectLocal(noBtn), yesFixed, SAFE_GAP)) moveNoAway(true);
-    }
+      const leftMax  = y.x - nW - 80;                 // push far left
+      const leftMin  = PAD;
 
-    function randomSafeSpot(){
-      const s = stage.getBoundingClientRect();
-      const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
+      // If side range is impossible (small screens), we fall back to any safe spot
+      const sideRangeOk = sideRight ? (rightMin <= rightMax) : (leftMin <= leftMax);
 
-      // Try multiple times to find a non-overlapping spot
       let best = null;
-      for (let i = 0; i < 40; i++){
-        const x = PAD + Math.random() * (s.width  - nW - PAD*2);
-        const y = PAD + Math.random() * (s.height - nH - PAD*2);
 
-        const candidate = { x, y, w: nW, h: nH };
-        if (!intersects(candidate, yesFixed, SAFE_GAP)){
-          // prefer farthest from YES center (feels nicer)
-          const cX = x + nW/2, cY = y + nH/2;
-          const yCX = yesFixed.x + yesFixed.w/2, yCY = yesFixed.y + yesFixed.h/2;
-          const d = (cX - yCX) ** 2 + (cY - yCY) ** 2;
-          if (!best || d > best.d) best = { x, y, d };
+      for (let i = 0; i < 50; i++){
+        let x;
+        if (sideRangeOk){
+          x = sideRight
+            ? (rightMin + Math.random() * (rightMax - rightMin))
+            : (leftMin  + Math.random() * (leftMax  - leftMin));
+        } else {
+          x = PAD + Math.random() * (s.width - nW - PAD*2);
+        }
+
+        const yPos = PAD + Math.random() * (s.height - nH - PAD*2);
+        const candidate = { x, y: yPos, w: nW, h: nH };
+
+        if (!overlaps(candidate, y)){
+          // prefer farthest from YES center
+          const cX = x + nW/2, cY = yPos + nH/2;
+          const yCX = y.x + y.w/2, yCY = y.y + y.h/2;
+          const d = (cX - yCX)**2 + (cY - yCY)**2;
+          if (!best || d > best.d) best = { x, y: yPos, d };
         }
       }
 
-      // fallback: force it to the far right or far left opposite of YES
       if (!best){
-        const rightX = s.width - nW - PAD;
-        const leftX  = PAD;
-        const yRand  = PAD + Math.random() * (s.height - nH - PAD*2);
-
-        // choose the side that doesn't overlap; if both overlap (rare), still pick far side
-        const candR = { x: rightX, y: yRand, w: nW, h: nH };
-        const candL = { x: leftX,  y: yRand, w: nW, h: nH };
-
-        if (!intersects(candR, yesFixed, SAFE_GAP)) best = { x: rightX, y: yRand };
-        else if (!intersects(candL, yesFixed, SAFE_GAP)) best = { x: leftX, y: yRand };
-        else best = { x: rightX, y: yRand };
+        // fallback: clamp to extreme side
+        const xFallback = sideRight ? (s.width - nW - PAD) : PAD;
+        const yFallback = PAD + Math.random() * (s.height - nH - PAD*2);
+        best = { x: xFallback, y: yFallback };
       }
 
       return best;
     }
 
-    function moveNoAway(isFirst=false){
-      const spot = randomSafeSpot();
-      setPos(noBtn, spot.x, spot.y);
-      hint.textContent = isFirst ? "Okay okay… try now 😌" : "Nope 😌";
+    function showCuteMsg(){
+      // show message for 2 sec, then revert
+      const original = "No 🙃";
+      const msg = cuteMsgs[Math.floor(Math.random() * cuteMsgs.length)];
+      noBtn.textContent = msg;
+
+      if (msgTimer) clearTimeout(msgTimer);
+      msgTimer = setTimeout(() => { noBtn.textContent = original; }, 2000);
     }
 
-    // YES click -> success
-    yesBtn.addEventListener("click", () => {
+    function runAway(){
+      blocks++;
+      tiny.textContent = `No attempts blocked: ${blocks} 😌`;
+
+      showCuteMsg();
+
+      // Alternate side each time
+      const spot = pickFarSpot(nextRight);
+      nextRight = !nextRight;
+
+      setPos(noBtn, spot.x, spot.y);
+      hint.textContent = "Nope 😌";
+    }
+
+    function showSuccess(){
       success.style.display = "block";
       hint.textContent = "Best choice 💘";
-      noBtn.style.pointerEvents = "none"; // optional: stop running once accepted
-    });
+      // optional: stop the NO button after success
+      noBtn.style.pointerEvents = "none";
+    }
 
-    // NO runs away on hover/touch/click
-    noBtn.addEventListener("mouseenter", () => moveNoAway(false));
-    noBtn.addEventListener("mouseover",  () => moveNoAway(false));
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoAway(false); }, { passive:false });
-    noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoAway(false); });
+    // Events
+    yesBtn.addEventListener("click", showSuccess);
 
-    // Layout once ready
-    window.addEventListener("load", () => {
+    // Run away on hover/touch/click
+    noBtn.addEventListener("mouseenter", runAway);
+    noBtn.addEventListener("mouseover", runAway);
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); runAway(); });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); runAway(); }, { passive:false });
+
+    // Initial layout
+    function layout(){
       placeYesFixed();
-      placeNoInitial();
-      // small reflow safety for font loading
-      setTimeout(() => { placeYesFixed(); placeNoInitial(); }, 80);
-    });
 
-    // Keep YES fixed in same relative spot on resize; re-place NO safely
-    window.addEventListener("resize", () => {
-      placeYesFixed();
-      // if NO now overlaps due to resize, move it away
-      if (intersects(getRectLocal(noBtn), yesFixed, SAFE_GAP)) moveNoAway(true);
-      else {
-        // clamp NO into bounds if needed
-        const n = getRectLocal(noBtn);
-        setPos(noBtn, n.x, n.y);
+      // place NO initially on the right side, far from YES
+      const spot = pickFarSpot(true);
+      nextRight = false; // next move goes left
+      setPos(noBtn, spot.x, spot.y);
+
+      // Ensure not overlapping (extra safety)
+      const y = localRect(yesBtn);
+      const n = localRect(noBtn);
+      if (overlaps(n, y)) {
+        const fallback = pickFarSpot(false);
+        setPos(noBtn, fallback.x, fallback.y);
       }
+    }
+
+    window.addEventListener("load", () => {
+      layout();
+      setTimeout(layout, 80); // font load safety
     });
+    window.addEventListener("resize", layout);
   </script>
 </body>
 </html>
