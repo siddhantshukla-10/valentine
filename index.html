@@ -6,14 +6,7 @@
   <title>Will you be my valentine forever, bubu? 💘</title>
 
   <style>
-    :root{
-      /* ✅ OPTIONAL background image:
-         1) Upload bg.jpg beside index.html
-         2) Keep this line as-is
-         - OR disable background by setting it to: none
-      */
-      --bg-img: none; /* change to none to disable */
-
+    :root {
       --card: rgba(255,255,255,0.75);
       --text: #1f1f1f;
       --yes: #22c55e;
@@ -32,39 +25,34 @@
       color: var(--text);
       overflow: hidden;
 
-      /* Romantic gradient base */
+      /* ✅ Always romantic background (never black) */
       background:
         radial-gradient(1200px 800px at 20% 10%, #ffdde1, transparent 60%),
         radial-gradient(1200px 800px at 80% 90%, #ee9ca7, transparent 60%),
         linear-gradient(135deg, #fff5f7, #ffe4e6);
-      position: relative;
     }
 
-    /* Optional background photo layer (behind gradients, softly visible) */
+    /* Optional photo layer (only enabled by JS) */
     .bgPhoto {
       position: fixed;
       inset: 0;
-      background-image: var(--bg-img);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.28;         /* soft */
+      opacity: 0.26;              /* soft */
       filter: blur(2px) saturate(1.05);
       transform: scale(1.02);
       pointer-events: none;
       z-index: 0;
-      display: block;
+      display: none;              /* off by default */
     }
-    /* If bg disabled -> hide layer */
-    .bgOff { display: none; }
 
-    /* Extra romantic overlay glow */
     .softOverlay {
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(900px 600px at 50% 20%, rgba(255,105,180,0.18), transparent 60%),
-        radial-gradient(900px 600px at 50% 90%, rgba(255,45,85,0.14), transparent 60%);
+        radial-gradient(900px 600px at 50% 20%, rgba(255,105,180,0.16), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,45,85,0.12), transparent 60%);
       pointer-events: none;
       z-index: 1;
     }
@@ -212,20 +200,22 @@
       </div>
     </section>
 
-    <div class="hint" id="hint">Try hovering on “No” 👀</div>
+    <div class="hint" id="hint">Hover on “No” 👀</div>
     <div class="tiny" id="tiny">No attempts blocked: 0 😌</div>
   </main>
 
   <script>
-    // ----- Optional background photo toggle -----
-    // If you set --bg-img: none in CSS, we hide the bg layer to avoid blank overlay.
-    (function(){
-      const bg = document.getElementById("bgPhoto");
-      const bgImg = getComputedStyle(document.documentElement).getPropertyValue("--bg-img").trim();
-      if (!bgImg || bgImg === "none") bg.classList.add("bgOff");
-    })();
+    // ====== OPTIONAL BACKGROUND PHOTO ======
+    const USE_BG_PHOTO = false;      // <-- set true if you want your couple photo
+    const BG_FILE = "bg.jpg";        // <-- your file name in repo root
 
-    // ----- Floating hearts -----
+    const bgPhoto = document.getElementById("bgPhoto");
+    if (USE_BG_PHOTO) {
+      bgPhoto.style.backgroundImage = `url("${BG_FILE}")`;
+      bgPhoto.style.display = "block";
+    }
+
+    // ====== FLOATING HEARTS ======
     const heartsWrap = document.getElementById("hearts");
     const heartEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨"];
     function makeHeart(){
@@ -243,7 +233,7 @@
     for (let i = 0; i < 26; i++) makeHeart();
     setInterval(makeHeart, 650);
 
-    // ----- Button logic -----
+    // ====== BUTTON LOGIC ======
     const stage = document.getElementById("stage");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn  = document.getElementById("noBtn");
@@ -252,19 +242,14 @@
     const tiny = document.getElementById("tiny");
 
     const PAD = 12;
-    const GAP = 18; // safety gap so NO never overlaps YES
+    const GAP = 18;      // safety gap so NO never overlaps YES
+    const FAR = 90;      // how far away from YES we aim
     let blocks = 0;
 
-    // Alternate sides: true => place NO on right of YES, false => left
-    let nextRight = true;
+    // Alternate sides: true => move NO to right of YES, then left, then right...
+    let placeRightNext = true;
 
-    const cuteMsgs = [
-      "Are you sure? 🥺",
-      "Think again 😭",
-      "Pls no 🙈",
-      "Bubu… really? 🥹",
-      "Last chance 😌"
-    ];
+    const cuteMsgs = ["Are you sure? 🥺","Think again 😭","Pls no 🙈","Bubu… really? 🥹","Last chance 😌"];
     let msgTimer = null;
 
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
@@ -296,45 +281,44 @@
 
     function placeYesFixed(){
       const s = stage.getBoundingClientRect();
-      const yW = yesBtn.offsetWidth, yH = yesBtn.offsetHeight;
-      // Fixed spot: slightly left of center
-      const x = s.width * 0.38 - yW/2;
-      const y = s.height * 0.52 - yH/2;
+      const w = yesBtn.offsetWidth, h = yesBtn.offsetHeight;
+      const x = s.width * 0.38 - w/2;
+      const y = s.height * 0.52 - h/2;
       setPos(yesBtn, x, y);
     }
 
-    function pickFarSpot(sideRight){
+    function pickSpotOnSide(sideRight){
       const s = stage.getBoundingClientRect();
       const y = localRect(yesBtn);
       const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
 
-      // Define a target x range based on side (farther from YES)
-      const rightMin = y.x + y.w + 80;                // push far right
+      // Desired X range for each side (far from YES)
+      const rightMin = y.x + y.w + FAR;
       const rightMax = s.width - nW - PAD;
 
-      const leftMax  = y.x - nW - 80;                 // push far left
       const leftMin  = PAD;
+      const leftMax  = y.x - nW - FAR;
 
-      // If side range is impossible (small screens), we fall back to any safe spot
-      const sideRangeOk = sideRight ? (rightMin <= rightMax) : (leftMin <= leftMax);
+      const sideOk = sideRight ? (rightMin <= rightMax) : (leftMin <= leftMax);
 
       let best = null;
 
-      for (let i = 0; i < 50; i++){
+      for (let i = 0; i < 60; i++){
         let x;
-        if (sideRangeOk){
+        if (sideOk){
           x = sideRight
             ? (rightMin + Math.random() * (rightMax - rightMin))
             : (leftMin  + Math.random() * (leftMax  - leftMin));
         } else {
+          // Small screen fallback: anywhere safe
           x = PAD + Math.random() * (s.width - nW - PAD*2);
         }
 
         const yPos = PAD + Math.random() * (s.height - nH - PAD*2);
-        const candidate = { x, y: yPos, w: nW, h: nH };
+        const cand = { x, y: yPos, w: nW, h: nH };
 
-        if (!overlaps(candidate, y)){
-          // prefer farthest from YES center
+        if (!overlaps(cand, y)){
+          // maximize distance from YES center
           const cX = x + nW/2, cY = yPos + nH/2;
           const yCX = y.x + y.w/2, yCY = y.y + y.h/2;
           const d = (cX - yCX)**2 + (cY - yCY)**2;
@@ -342,8 +326,8 @@
         }
       }
 
+      // Hard fallback to extreme side if nothing found
       if (!best){
-        // fallback: clamp to extreme side
         const xFallback = sideRight ? (s.width - nW - PAD) : PAD;
         const yFallback = PAD + Math.random() * (s.height - nH - PAD*2);
         best = { x: xFallback, y: yFallback };
@@ -353,7 +337,6 @@
     }
 
     function showCuteMsg(){
-      // show message for 2 sec, then revert
       const original = "No 🙃";
       const msg = cuteMsgs[Math.floor(Math.random() * cuteMsgs.length)];
       noBtn.textContent = msg;
@@ -369,8 +352,8 @@
       showCuteMsg();
 
       // Alternate side each time
-      const spot = pickFarSpot(nextRight);
-      nextRight = !nextRight;
+      const spot = pickSpotOnSide(placeRightNext);
+      placeRightNext = !placeRightNext;
 
       setPos(noBtn, spot.x, spot.y);
       hint.textContent = "Nope 😌";
@@ -379,42 +362,44 @@
     function showSuccess(){
       success.style.display = "block";
       hint.textContent = "Best choice 💘";
-      // optional: stop the NO button after success
-      noBtn.style.pointerEvents = "none";
+      noBtn.style.pointerEvents = "none"; // optional: freeze after yes
     }
 
-    // Events
     yesBtn.addEventListener("click", showSuccess);
 
-    // Run away on hover/touch/click
-    noBtn.addEventListener("mouseenter", runAway);
-    noBtn.addEventListener("mouseover", runAway);
+    // NO runs away on hover/touch/click
+    noBtn.addEventListener("pointerenter", runAway);
     noBtn.addEventListener("click", (e) => { e.preventDefault(); runAway(); });
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); runAway(); }, { passive:false });
 
-    // Initial layout
     function layout(){
       placeYesFixed();
 
-      // place NO initially on the right side, far from YES
-      const spot = pickFarSpot(true);
-      nextRight = false; // next move goes left
+      // initial NO placement on right side
+      const spot = pickSpotOnSide(true);
+      placeRightNext = false; // next move goes left
       setPos(noBtn, spot.x, spot.y);
 
-      // Ensure not overlapping (extra safety)
+      // extra safety check
       const y = localRect(yesBtn);
       const n = localRect(noBtn);
-      if (overlaps(n, y)) {
-        const fallback = pickFarSpot(false);
+      if (overlaps(n, y)){
+        const fallback = pickSpotOnSide(false);
         setPos(noBtn, fallback.x, fallback.y);
       }
     }
 
     window.addEventListener("load", () => {
-      layout();
-      setTimeout(layout, 80); // font load safety
+      // ensure sizes are computed
+      requestAnimationFrame(() => {
+        layout();
+        setTimeout(layout, 80);
+      });
     });
-    window.addEventListener("resize", layout);
+
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(layout);
+    });
   </script>
 </body>
 </html>
