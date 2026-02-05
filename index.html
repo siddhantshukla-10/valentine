@@ -4,65 +4,33 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Will you be my valentine forever, bubu? 💘</title>
-  <meta name="description" content="A romantic valentine page 💘" />
+
   <style>
     :root{
-      --card: rgba(255,255,255,0.16);
+      --glass: rgba(255,255,255,0.16);
       --border: rgba(255,255,255,0.22);
       --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.75);
+      --muted: rgba(255,255,255,0.78);
       --yes: #22c55e;
       --no: #ef4444;
       --shadow: 0 20px 70px rgba(0,0,0,0.45);
     }
     *{ box-sizing:border-box; }
+
     body{
       margin:0;
       min-height:100vh;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color: var(--text);
       overflow:hidden;
-      background:#0b0b10;
-    }
 
-    /* Background photo layers */
-    .bg{
-      position:fixed; inset:0;
-      background-position:center;
-      background-size:cover;
-      transform: scale(1.06);
-      filter: blur(8px) saturate(1.1);
-      opacity: 0.95;
-    }
-    .overlay{
-      position:fixed; inset:0;
-      background:
-        radial-gradient(900px 600px at 20% 10%, rgba(255,105,180,0.22), transparent 60%),
-        radial-gradient(900px 600px at 80% 90%, rgba(255,45,85,0.22), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.65));
-    }
-    .vignette{
-      position:fixed; inset:-40px;
-      box-shadow: inset 0 0 180px rgba(0,0,0,0.65);
-      pointer-events:none;
-    }
-
-    /* Floating sparkles/hearts */
-    .floaters{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0.55;
-    }
-    .floater{
-      position:absolute;
-      transform: translateY(120vh);
-      animation: floatUp linear infinite;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
-      user-select:none;
-    }
-    @keyframes floatUp{
-      from { transform: translateY(120vh) translateX(0) rotate(0deg); }
-      to   { transform: translateY(-20vh) translateX(40px) rotate(18deg); }
+      /* ✅ Background photo: upload bg.jpg to same repo folder as index.html */
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.70)),
+        url("bg.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .wrap{
@@ -70,72 +38,47 @@
       display:grid;
       place-items:center;
       padding: 18px;
-      position:relative;
-      z-index:2;
     }
 
     .card{
       width:min(760px, calc(100vw - 28px));
-      border-radius: 30px;
-      background: var(--card);
+      border-radius: 28px;
+      background: var(--glass);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      padding: 30px 26px 26px;
-      position:relative;
-      overflow:hidden;
+      backdrop-filter: blur(12px);
+      padding: 28px 22px;
+      text-align:center;
     }
 
-    .topGlow{
-      position:absolute; inset:-80px -80px auto -80px;
-      height: 200px;
-      background: radial-gradient(circle at 50% 50%, rgba(255,105,180,0.35), transparent 60%);
-      pointer-events:none;
-    }
-
-    .title{
-      margin:0;
+    h1{
+      margin: 0 0 10px;
       font-size: clamp(28px, 4vw, 46px);
       letter-spacing:-0.02em;
       line-height:1.06;
-      text-align:center;
       text-shadow: 0 10px 30px rgba(0,0,0,0.45);
     }
-    .subtitle{
-      margin: 10px 0 18px;
-      text-align:center;
+    .sub{
+      margin: 0 0 18px;
       color: var(--muted);
       font-size: 15.5px;
-      line-height:1.4;
+      line-height: 1.4;
     }
 
-    .loveNote{
-      text-align:center;
-      color: rgba(255,255,255,0.85);
-      font-size: 14px;
-      margin: 0 0 18px;
-    }
-
+    /* Play area */
     .stage{
       position:relative;
-      height: 250px;
-      border-radius: 24px;
+      height: 260px;
+      border-radius: 22px;
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.18);
-      display:grid;
-      place-items:center;
       overflow:hidden;
-    }
-
-    .row{
       display:flex;
-      gap: 16px;
       align-items:center;
       justify-content:center;
-      position:relative;
     }
 
-    button{
+    .btn{
       appearance:none;
       border:0;
       border-radius: 999px;
@@ -143,39 +86,197 @@
       font-size: 18px;
       font-weight: 800;
       cursor:pointer;
-      transition: transform 0.12s ease, filter 0.12s ease;
       box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+      transition: transform 0.12s ease;
       user-select:none;
       letter-spacing: 0.2px;
+      position:absolute;
     }
-    button:hover{ transform: translateY(-1px); }
-    button:active{ transform: scale(0.98); }
+    .btn:active{ transform: scale(0.98); }
 
-    .yes{ background: linear-gradient(135deg, #22c55e, #16a34a); color:white; }
-    .no { background: linear-gradient(135deg, #ff4d6d, #ef4444); color:white; }
-
-    .hint{
-      margin-top: 14px;
-      text-align:center;
-      color: rgba(255,255,255,0.75);
-      font-size: 13.5px;
+    #yesBtn{
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color:white;
+    }
+    #noBtn{
+      background: linear-gradient(135deg, #ff4d6d, #ef4444);
+      color:white;
     }
 
     .success{
       display:none;
-      text-align:center;
-      padding: 8px 10px;
-      max-width: 520px;
+      margin-top: 16px;
+      padding: 12px 12px 0;
+      color: rgba(255,255,255,0.92);
     }
-    .success .big{
-      font-size: 54px;
-      margin-bottom: 6px;
-    }
+    .success .big{ font-size: 46px; }
     .success h2{
-      margin: 6px 0 6px;
-      font-size: 30px;
-      letter-spacing:-0.01em;
+      margin: 8px 0 6px;
+      font-size: 28px;
     }
     .success p{
       margin: 0;
-      color: rgba(255,255
+      color: rgba(255,255,255,0.82);
+      font-size: 15.5px;
+      line-height: 1.5;
+    }
+    .hint{
+      margin-top: 14px;
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .footer{
+      margin-top: 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <main class="card">
+      <h1>Will you be my valentine forever, bubu? 💘</h1>
+      <p class="sub">No pressure… but also… there’s only one correct answer 😌</p>
+
+      <section class="stage" id="stage" aria-label="Valentine choice area">
+        <button class="btn" id="yesBtn">Yes 💚</button>
+        <button class="btn" id="noBtn">No 🙃</button>
+      </section>
+
+      <div class="success" id="success">
+        <div class="big">🥹💘</div>
+        <h2>Yayyy! It’s a forever yes.</h2>
+        <p>Okay bubu… now you’re officially stuck with me 😌❤️</p>
+      </div>
+
+      <div class="hint" id="hint">Try hovering on “No” 😏</div>
+      <div class="footer">Tip: If you don’t want a photo background, remove `url("bg.jpg")` from CSS.</div>
+    </main>
+  </div>
+
+  <script>
+    const stage = document.getElementById("stage");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const success = document.getElementById("success");
+    const hint = document.getElementById("hint");
+
+    // Keep buttons within bounds and ensure No never overlaps Yes
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function rect(el){ return el.getBoundingClientRect(); }
+
+    function placeInitial() {
+      // Place Yes left-ish, No right-ish
+      const s = rect(stage);
+      const yW = yesBtn.offsetWidth, yH = yesBtn.offsetHeight;
+      const nW = noBtn.offsetWidth,  nH = noBtn.offsetHeight;
+
+      const midY = s.height / 2;
+      setPos(yesBtn, s.width * 0.35 - yW/2, midY - yH/2);
+      setPos(noBtn,  s.width * 0.65 - nW/2, midY - nH/2);
+    }
+
+    function setPos(el, x, y){
+      // position relative to stage
+      const s = rect(stage);
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const pad = 12;
+      const nx = clamp(x, pad, s.width  - w - pad);
+      const ny = clamp(y, pad, s.height - h - pad);
+      el.style.left = nx + "px";
+      el.style.top  = ny + "px";
+    }
+
+    function distance(ax, ay, bx, by){
+      const dx = ax - bx, dy = ay - by;
+      return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    function getCenter(el){
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const x = parseFloat(el.style.left || "0") + w/2;
+      const y = parseFloat(el.style.top  || "0") + h/2;
+      return {x, y, w, h};
+    }
+
+    function moveNoAway() {
+      const s = rect(stage);
+      const pad = 12;
+
+      const yC = getCenter(yesBtn);
+      const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
+
+      // Minimum distance between centers so they don't overlap or get too close
+      const minDist = Math.max(yC.w, nW) * 0.9;
+
+      // Try multiple random positions; pick the farthest valid one
+      let best = null;
+
+      for (let i = 0; i < 25; i++){
+        const x = pad + Math.random() * (s.width  - nW - pad*2);
+        const y = pad + Math.random() * (s.height - nH - pad*2);
+
+        const cX = x + nW/2;
+        const cY = y + nH/2;
+
+        const d = distance(cX, cY, yC.x, yC.y);
+
+        if (d >= minDist){
+          if (!best || d > best.d){
+            best = {x, y, d};
+          }
+        }
+      }
+
+      // If we didn't find a perfect spot, still move to the farthest we found (even if close),
+      // but it will still be clamped inside the stage.
+      if (!best){
+        // place opposite side of Yes as a fallback
+        const fallbackX = (yC.x < s.width/2) ? (s.width - nW - pad) : pad;
+        const fallbackY = pad + Math.random() * (s.height - nH - pad*2);
+        best = {x: fallbackX, y: fallbackY, d: 0};
+      }
+
+      setPos(noBtn, best.x, best.y);
+      hint.textContent = "Nope 😌";
+    }
+
+    // Success
+    yesBtn.addEventListener("click", () => {
+      success.style.display = "block";
+      hint.textContent = "Best choice 💘";
+      // disable No movement after success if you want
+      noBtn.style.pointerEvents = "none";
+    });
+
+    // Move No on hover (desktop) + touch (mobile)
+    noBtn.addEventListener("mouseenter", moveNoAway);
+    noBtn.addEventListener("mouseover", moveNoAway);
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoAway();
+    }, { passive:false });
+
+    // Also move No if they try to click it
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoAway();
+    });
+
+    // Initial layout after DOM paints
+    window.addEventListener("load", () => {
+      placeInitial();
+      // in case fonts change sizes slightly
+      setTimeout(placeInitial, 80);
+    });
+
+    // Keep positions sane on resize
+    window.addEventListener("resize", () => {
+      placeInitial();
+    });
+  </script>
+</body>
+</html>
