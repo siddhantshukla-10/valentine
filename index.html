@@ -4,298 +4,178 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Will you be my valentine forever, bubu? 💘</title>
-  <meta name="description" content="A tiny playful valentine site. You can never say no 😈💘" />
+  <meta name="description" content="A romantic valentine page 💘" />
   <style>
-    :root {
-      --bg1: #ffdde1;
-      --bg2: #ee9ca7;
-      --card: rgba(255,255,255,0.75);
-      --text: #1f1f1f;
+    :root{
+      --card: rgba(255,255,255,0.16);
+      --border: rgba(255,255,255,0.22);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.75);
       --yes: #22c55e;
       --no: #ef4444;
-      --shadow: 0 20px 60px rgba(0,0,0,0.15);
+      --shadow: 0 20px 70px rgba(0,0,0,0.45);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: radial-gradient(1200px 800px at 20% 10%, var(--bg1), transparent 60%),
-                  radial-gradient(1200px 800px at 80% 90%, var(--bg2), transparent 60%),
-                  linear-gradient(135deg, #fff5f7, #ffe4e6);
       color: var(--text);
-      overflow: hidden;
+      overflow:hidden;
+      background:#0b0b10;
     }
-    .hearts {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.35;
-      filter: blur(0.2px);
+
+    /* Background photo layers */
+    .bg{
+      position:fixed; inset:0;
+      background-position:center;
+      background-size:cover;
+      transform: scale(1.06);
+      filter: blur(8px) saturate(1.1);
+      opacity: 0.95;
     }
-    .heart {
-      position: absolute;
-      font-size: 22px;
-      animation: floatUp linear infinite;
+    .overlay{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(255,105,180,0.22), transparent 60%),
+        radial-gradient(900px 600px at 80% 90%, rgba(255,45,85,0.22), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.65));
+    }
+    .vignette{
+      position:fixed; inset:-40px;
+      box-shadow: inset 0 0 180px rgba(0,0,0,0.65);
+      pointer-events:none;
+    }
+
+    /* Floating sparkles/hearts */
+    .floaters{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:0.55;
+    }
+    .floater{
+      position:absolute;
       transform: translateY(120vh);
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+      user-select:none;
     }
-    @keyframes floatUp {
+    @keyframes floatUp{
       from { transform: translateY(120vh) translateX(0) rotate(0deg); }
-      to   { transform: translateY(-20vh) translateX(40px) rotate(25deg); }
+      to   { transform: translateY(-20vh) translateX(40px) rotate(18deg); }
     }
 
-    .card {
-      width: min(720px, calc(100vw - 32px));
+    .wrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding: 18px;
+      position:relative;
+      z-index:2;
+    }
+
+    .card{
+      width:min(760px, calc(100vw - 28px));
+      border-radius: 30px;
       background: var(--card);
-      border: 1px solid rgba(255,255,255,0.7);
-      border-radius: 28px;
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 28px;
-      backdrop-filter: blur(10px);
-      position: relative;
+      backdrop-filter: blur(14px);
+      padding: 30px 26px 26px;
+      position:relative;
+      overflow:hidden;
     }
 
-    .title {
-      font-size: clamp(28px, 4vw, 44px);
-      line-height: 1.1;
-      margin: 0 0 10px;
-      letter-spacing: -0.02em;
-      text-align: center;
-    }
-    .subtitle {
-      margin: 0 0 18px;
-      text-align: center;
-      font-size: 16px;
-      opacity: 0.85;
+    .topGlow{
+      position:absolute; inset:-80px -80px auto -80px;
+      height: 200px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,105,180,0.35), transparent 60%);
+      pointer-events:none;
     }
 
-    .stage {
-      position: relative;
-      height: 220px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(255,255,255,0.7);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
+    .title{
+      margin:0;
+      font-size: clamp(28px, 4vw, 46px);
+      letter-spacing:-0.02em;
+      line-height:1.06;
+      text-align:center;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+    .subtitle{
+      margin: 10px 0 18px;
+      text-align:center;
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height:1.4;
     }
 
-    .buttons {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-    }
-
-    button {
-      appearance: none;
-      border: 0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.12s ease, filter 0.12s ease;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.14);
-      user-select: none;
-    }
-    button:active { transform: scale(0.98); }
-    .yes { background: var(--yes); color: white; }
-    .no  { background: var(--no);  color: white; }
-
-    .row {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hint {
-      margin-top: 16px;
-      text-align: center;
-      opacity: 0.75;
+    .loveNote{
+      text-align:center;
+      color: rgba(255,255,255,0.85);
       font-size: 14px;
+      margin: 0 0 18px;
     }
 
-    .success {
-      display: none;
-      text-align: center;
-      padding: 14px 0 0;
+    .stage{
+      position:relative;
+      height: 250px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
     }
-    .success h2 {
-      margin: 10px 0 6px;
-      font-size: 28px;
+
+    .row{
+      display:flex;
+      gap: 16px;
+      align-items:center;
+      justify-content:center;
+      position:relative;
     }
-    .success p {
-      margin: 0;
-      opacity: 0.9;
-      font-size: 16px;
-    }
-    .badge {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      margin-top: 14px;
-      background: rgba(34,197,94,0.15);
-      border: 1px solid rgba(34,197,94,0.35);
-      padding: 10px 14px;
+
+    button{
+      appearance:none;
+      border:0;
       border-radius: 999px;
-      font-weight: 700;
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform 0.12s ease, filter 0.12s ease;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+      user-select:none;
+      letter-spacing: 0.2px;
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: scale(0.98); }
+
+    .yes{ background: linear-gradient(135deg, #22c55e, #16a34a); color:white; }
+    .no { background: linear-gradient(135deg, #ff4d6d, #ef4444); color:white; }
+
+    .hint{
+      margin-top: 14px;
+      text-align:center;
+      color: rgba(255,255,255,0.75);
+      font-size: 13.5px;
     }
 
-    .tiny {
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.6;
-      text-align: center;
+    .success{
+      display:none;
+      text-align:center;
+      padding: 8px 10px;
+      max-width: 520px;
     }
-
-    .footer {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.6;
+    .success .big{
+      font-size: 54px;
+      margin-bottom: 6px;
     }
-    a { color: inherit; }
-  </style>
-</head>
-<body>
-  <div class="hearts" id="hearts"></div>
-
-  <main class="card" id="card">
-    <h1 class="title">Will you be my valentine forever, <span aria-label="bubu">bubu</span>? 💘</h1>
-    <p class="subtitle">Pick wisely… because “No” is currently under maintenance 😈</p>
-
-    <section class="stage" id="stage" aria-label="Valentine choice area">
-      <div class="buttons">
-        <div class="row" id="btnRow">
-          <button class="yes" id="yesBtn">Yes 💚</button>
-          <button class="no" id="noBtn">No 🙃</button>
-        </div>
-      </div>
-
-      <div class="success" id="success">
-        <div style="font-size:48px;">🥹💘✨</div>
-        <h2>Yayyyyy! It’s a forever date 💍</h2>
-        <p>Okay bubu, now you’re officially stuck with me. 😌</p>
-        <div class="badge">✅ “Yes” locked in forever</div>
-      </div>
-    </section>
-
-    <div class="hint" id="hint">Try clicking “No” if you dare 👀</div>
-    <div class="tiny" id="tiny"></div>
-
-    <div class="footer">
-      Made with ❤️ — share this link once you host it.
-    </div>
-  </main>
-
-  <script>
-    // Floating hearts background
-    const heartsWrap = document.getElementById("hearts");
-    const heartEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷"];
-    const makeHeart = () => {
-      const el = document.createElement("div");
-      el.className = "heart";
-      el.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-      el.style.left = Math.random() * 100 + "vw";
-      el.style.animationDuration = (6 + Math.random() * 10) + "s";
-      el.style.fontSize = (16 + Math.random() * 22) + "px";
-      el.style.opacity = (0.25 + Math.random() * 0.6);
-      el.style.animationDelay = (-Math.random() * 10) + "s";
-      heartsWrap.appendChild(el);
-      setTimeout(() => el.remove(), 17000);
-    };
-    for (let i = 0; i < 24; i++) makeHeart();
-    setInterval(makeHeart, 600);
-
-    const stage = document.getElementById("stage");
-    const btnRow = document.getElementById("btnRow");
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn  = document.getElementById("noBtn");
-    const success = document.getElementById("success");
-    const hint = document.getElementById("hint");
-    const tiny = document.getElementById("tiny");
-
-    let swaps = 0;
-
-    // Helper: swap button labels + classes so "No" becomes "Yes" and vice-versa
-    function swapButtons() {
-      swaps++;
-
-      // Swap text
-      const yesText = yesBtn.textContent;
-      yesBtn.textContent = noBtn.textContent;
-      noBtn.textContent = yesText;
-
-      // Swap classes (colors)
-      yesBtn.classList.toggle("yes");
-      yesBtn.classList.toggle("no");
-      noBtn.classList.toggle("no");
-      noBtn.classList.toggle("yes");
-
-      // Also swap IDs meaning (by swapping click handlers logic via a flag)
-      // We'll keep handlers fixed but update a data attribute.
-      const y = yesBtn.dataset.role || "yes";
-      const n = noBtn.dataset.role || "no";
-      yesBtn.dataset.role = n;
-      noBtn.dataset.role = y;
-
-      tiny.textContent = `No attempts blocked: ${swaps} 😌`;
+    .success h2{
+      margin: 6px 0 6px;
+      font-size: 30px;
+      letter-spacing:-0.01em;
     }
-
-    // Helper: make the "No" button run away slightly (playful)
-    function dodgeNoButton() {
-      const rect = stage.getBoundingClientRect();
-      const pad = 18;
-
-      // Random spot inside stage
-      const x = pad + Math.random() * (rect.width - pad * 2);
-      const y = pad + Math.random() * (rect.height - pad * 2);
-
-      // Position noBtn absolutely within stage
-      noBtn.style.position = "absolute";
-      noBtn.style.left = Math.min(rect.width - 110, Math.max(10, x)) + "px";
-      noBtn.style.top  = Math.min(rect.height - 56, Math.max(10, y)) + "px";
-    }
-
-    function showSuccess() {
-      btnRow.style.display = "none";
-      success.style.display = "block";
-      hint.textContent = "Good choice 😌💘";
-      // confetti-ish hearts burst
-      for (let i = 0; i < 18; i++) makeHeart();
-    }
-
-    // Click handling:
-    // If they click the button that is currently "No", swap it instantly.
-    // If they click "Yes", success.
-    function handleChoiceClick(e) {
-      const role = e.currentTarget.dataset.role || (e.currentTarget === yesBtn ? "yes" : "no");
-      if (role === "yes") {
-        showSuccess();
-      } else {
-        // They tried "No" 😈
-        swapButtons();
-        dodgeNoButton();
-        hint.textContent = "Nice try. 😏";
-      }
-    }
-
-    yesBtn.dataset.role = "yes";
-    noBtn.dataset.role = "no";
-    yesBtn.addEventListener("click", handleChoiceClick);
-    noBtn.addEventListener("click", handleChoiceClick);
-
-    // Make the No button extra annoying: on hover / touch, it dodges and swaps.
-    noBtn.addEventListener("mouseenter", () => { swapButtons(); dodgeNoButton(); });
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); swapButtons(); dodgeNoButton(); }, { passive: false });
-
-    // Initial tiny text
-    tiny.textContent = "No attempts blocked: 0 😌";
-  </script>
-</body>
-</html>
+    .success p{
+      margin: 0;
+      color: rgba(255,255
