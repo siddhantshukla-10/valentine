@@ -36,7 +36,6 @@
       color:var(--text);
       overflow:hidden;
 
-      /* Always cute (no black background) */
       background:
         radial-gradient(1100px 760px at 18% 10%, var(--bg1), transparent 60%),
         radial-gradient(1100px 760px at 82% 88%, var(--bg2), transparent 62%),
@@ -44,7 +43,6 @@
         linear-gradient(135deg, var(--bg3), var(--bg4));
     }
 
-    /* Soft glow layer */
     .glow{
       position:fixed;
       inset:-20%;
@@ -58,7 +56,6 @@
       opacity:0.95;
     }
 
-    /* Bubu/Dudu photo frames around edges */
     .stickers{
       position:fixed;
       inset:0;
@@ -86,7 +83,6 @@
       border-radius:12px;
     }
 
-    /* Floating hearts layer */
     .hearts, .sparks, .confetti{
       position:fixed;
       inset:0;
@@ -109,7 +105,6 @@
       to  { transform: translateY(-20vh) translateX(48px) rotate(22deg); }
     }
 
-    /* Firework sparkles */
     .spark{
       position:absolute;
       width:6px; height:6px;
@@ -123,7 +118,6 @@
       100%{ transform: translate(-50%,-50%) scale(2.4); opacity:0; }
     }
 
-    /* Confetti */
     .conf{
       position:absolute;
       width:10px; height:14px;
@@ -139,7 +133,6 @@
       }
     }
 
-    /* Main card */
     .card{
       width:min(800px, calc(100vw - 32px));
       background:var(--card);
@@ -177,7 +170,7 @@
       overflow:hidden;
     }
 
-    /* Buttons start side-by-side */
+    /* Buttons start side-by-side in the center */
     .row{
       position:absolute;
       left:50%;
@@ -210,11 +203,12 @@
       background: linear-gradient(135deg, #22c55e, #16a34a);
       color:#fff;
     }
+
+    /* ✅ FIX: do NOT be absolute at start (stay inside flex row) */
     #noBtn{
       background: linear-gradient(135deg, #ff4d6d, #ff1f5a);
       color:#fff;
-      position:absolute; /* becomes meaningful after we detach */
-      left:0; top:0;
+      position: relative;
     }
 
     .hint{
@@ -273,10 +267,8 @@
 <body>
   <div class="glow"></div>
 
-  <!-- Stickers (your 10 images) -->
   <div class="stickers" id="stickers"></div>
 
-  <!-- Cute background layers -->
   <div class="hearts" id="hearts"></div>
   <div class="sparks" id="sparks"></div>
   <div class="confetti" id="confetti"></div>
@@ -307,7 +299,7 @@
   </main>
 
   <script>
-    // ---------- 1) Romantic typing subtitle ----------
+    // 1) Romantic typing subtitle
     const subtitleEl = document.getElementById("subtitle");
     const lines = [
       "I made this tiny page just to ask you one thing… 🥹",
@@ -323,10 +315,8 @@
     }
     typeLine();
 
-    // ---------- 2) Add your 10 cute images as "polaroids" around edges ----------
+    // 2) Stickers around edges (optional)
     const stickersWrap = document.getElementById("stickers");
-
-    // Put your images here (must exist in repo)
     const STICKER_URLS = [
       "assets/01.webp",
       "assets/02.webp",
@@ -340,7 +330,6 @@
       "assets/10.webp",
     ];
 
-    // fixed cute positions around corners/sides
     const positions = [
       { top: "14px", left: "14px", rot: "-12deg" },
       { top: "20px", left: "calc(50% - 60px)", rot: "8deg" },
@@ -368,15 +357,13 @@
       img.src = src;
       img.alt = "bubu dudu sticker";
       img.loading = "lazy";
-
-      // if image missing, hide frame (prevents broken icon)
       img.onerror = () => frame.remove();
 
       frame.appendChild(img);
       stickersWrap.appendChild(frame);
     });
 
-    // ---------- 3) Floating hearts background ----------
+    // 3) Floating hearts background
     const heartsWrap = document.getElementById("hearts");
     const floatEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨","🌸"];
     function spawnFloat(extraFast=false){
@@ -394,7 +381,7 @@
     for (let i = 0; i < 28; i++) spawnFloat(false);
     let floatInterval = setInterval(() => spawnFloat(false), 650);
 
-    // ---------- 4) Fireworks + confetti (celebration) ----------
+    // 4) Fireworks + confetti (celebration)
     const sparksWrap = document.getElementById("sparks");
     const confettiWrap = document.getElementById("confetti");
     let celebrateOn = false;
@@ -461,7 +448,7 @@
       confInterval = setInterval(spawnConfetti, 110);
     }
 
-    // ---------- 5) YES/NO behavior exactly as you want ----------
+    // 5) YES/NO behavior
     const stage = document.getElementById("stage");
     const btnRow = document.getElementById("btnRow");
     const yesBtn = document.getElementById("yesBtn");
@@ -471,8 +458,9 @@
     const tiny = document.getElementById("tiny");
 
     const PAD = 12;
-    const SAFE_GAP = 22;  // never overlap YES
-    const FAR = 95;       // runs far left/right from YES
+    const SAFE_GAP = 22;
+    const FAR = 95;
+
     let blocks = 0;
     let placeRightNext = true;
     let noDetached = false;
@@ -507,14 +495,23 @@
       );
     }
 
+    /* ✅ FIX: keep size + only switch to absolute on first hover */
     function detachNoToAbsolute(){
       const stageRect = stage.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
+
       const x = noRect.left - stageRect.left;
       const y = noRect.top  - stageRect.top;
 
+      // lock size so it doesn't shrink when removed from flex
+      const w = noBtn.offsetWidth;
+      const h = noBtn.offsetHeight;
+      noBtn.style.width = w + "px";
+      noBtn.style.height = h + "px";
+
       noBtn.style.position = "absolute";
       setAbsPos(noBtn, x, y);
+
       noDetached = true;
     }
 
@@ -524,7 +521,7 @@
       noBtn.textContent = msg;
 
       if (msgTimer) clearTimeout(msgTimer);
-      msgTimer = setTimeout(() => { noBtn.textContent = original; }, 1000); // ✅ 1 second then back to NO
+      msgTimer = setTimeout(() => { noBtn.textContent = original; }, 1000);
     }
 
     function pickSpotOnSide(sideRight){
@@ -557,7 +554,6 @@
             ? (rightMin + Math.random() * (rightMax - rightMin))
             : (leftMin  + Math.random() * (leftMax  - leftMin));
         } else {
-          // fallback (small screens)
           x = PAD + Math.random() * (s.width - nW - PAD*2);
         }
 
@@ -565,7 +561,6 @@
         const cand = { x, y: yPos, w: nW, h: nH };
 
         if (!overlapsRect(cand, yes)){
-          // choose farthest from YES
           const cX = x + nW/2, cY = yPos + nH/2;
           const yCX = yes.x + yes.w/2, yCY = yes.y + yes.h/2;
           const d = (cX - yCX)**2 + (cY - yCY)**2;
@@ -574,7 +569,6 @@
       }
 
       if (!best){
-        // last fallback
         best = { x: sideRight ? (s.width - nW - PAD) : PAD, y: PAD + Math.random() * (s.height - nH - PAD*2) };
       }
 
@@ -590,19 +584,18 @@
 
       if (!noDetached) detachNoToAbsolute();
 
-      const spot = pickSpotOnSide(placeRightNext);  // ✅ alternates left/right away from YES
+      const spot = pickSpotOnSide(placeRightNext);
       placeRightNext = !placeRightNext;
       setAbsPos(noBtn, spot.x, spot.y);
     }
 
     function onYes(){
-      btnRow.style.display = "none";     // ✅ remove both buttons
-      success.style.display = "block";   // ✅ show message clearly
+      btnRow.style.display = "none";
+      success.style.display = "block";
       hint.textContent = "Awww… you picked YES 💘";
 
       startCelebration();
 
-      // extra instant joy
       for (let i = 0; i < 22; i++) spawnFloat(true);
       for (let i = 0; i < 6; i++) setTimeout(sparkBurst, i * 200);
     }
