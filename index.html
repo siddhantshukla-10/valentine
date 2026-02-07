@@ -419,7 +419,7 @@ function showCuteMsg(){
   const msg = cuteMsgs[Math.floor(Math.random() * cuteMsgs.length)];
   noBtn.textContent = msg;
   if(msgTimer) clearTimeout(msgTimer);
-  msgTimer = setTimeout(() => { noBtn.textContent = originalNoText; }, 2000); // ✅ 2 seconds
+  msgTimer = setTimeout(() => { noBtn.textContent = originalNoText; }, 1400); // ✅ 1.4 seconds
 }
 
 function rectRelativeToStage(el){
