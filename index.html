@@ -4,389 +4,372 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Will you be my valentine forever, bubu? 💘</title>
-
+  <meta name="description" content="A tiny playful valentine site. You can never say no 😈💘" />
   <style>
-    :root{
-      --bg1:#ffdde1;
-      --bg2:#ee9ca7;
-      --bg3:#fff5f7;
-      --bg4:#ffe4e6;
-
-      --card: rgba(255,255,255,0.82);
-      --cardBorder: rgba(255,255,255,0.82);
-
-      --text:#1f1f1f;
-      --muted: rgba(31,31,31,0.72);
-
-      --shadow: 0 24px 70px rgba(0,0,0,0.14);
-
-      --yes1:#22c55e;
-      --yes2:#16a34a;
-
-      --no1:#ff4d6d;
-      --no2:#ff1f5a;
+    :root {
+      --bg1: #ffdde1;
+      --bg2: #ee9ca7;
+      --card: rgba(255,255,255,0.75);
+      --text: #1f1f1f;
+      --yes: #22c55e;
+      --no: #ef4444;
+      --shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
-
-    *{ box-sizing:border-box; }
-
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--text);
-      overflow:hidden;
-      background:
-        radial-gradient(1100px 760px at 18% 10%, var(--bg1), transparent 60%),
-        radial-gradient(1100px 760px at 82% 88%, var(--bg2), transparent 62%),
-        radial-gradient(800px 520px at 50% 35%, rgba(255,105,180,0.24), transparent 60%),
-        linear-gradient(135deg, var(--bg3), var(--bg4));
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(1200px 800px at 80% 90%, var(--bg2), transparent 60%),
+                  radial-gradient(900px 600px at 50% 40%, rgba(255,105,180,0.20), transparent 65%),
+                  linear-gradient(135deg, #fff5f7, #ffe4e6);
+      color: var(--text);
+      overflow: hidden;
     }
 
-    .glow{
-      position:fixed;
-      inset:-20%;
-      pointer-events:none;
-      z-index:0;
-      background:
-        radial-gradient(700px 500px at 25% 30%, rgba(255,45,85,0.18), transparent 60%),
-        radial-gradient(700px 500px at 75% 70%, rgba(255,105,180,0.20), transparent 60%),
-        radial-gradient(600px 450px at 55% 15%, rgba(255,200,220,0.22), transparent 60%);
-      filter: blur(7px);
-      opacity:0.95;
+    /* Stickers (optional) */
+    .stickers {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
     }
-
-    .stickers{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:1;
-    }
-    .sticker{
-      position:fixed;
-      width:120px;
-      height:auto;
-      border-radius:16px;
+    .sticker {
+      position: fixed;
+      width: 120px;
+      padding: 8px;
+      border-radius: 16px;
       background: rgba(255,255,255,0.55);
-      padding:8px;
-      border:1px solid rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 45px rgba(0,0,0,0.12);
-      transform: rotate(var(--rot)) translateZ(0);
-      opacity:0.92;
       backdrop-filter: blur(6px);
+      opacity: 0.92;
+      transform: rotate(var(--rot));
     }
-    .sticker img{
-      width:100%;
-      height:auto;
-      display:block;
-      border-radius:12px;
+    .sticker img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      height: auto;
     }
 
-    .hearts, .sparks, .confetti{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:2;
+    .hearts, .confetti, .sparks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      filter: blur(0.2px);
     }
-    .hearts{ opacity:0.42; }
-    .sparks{ opacity:0; transition:opacity 450ms ease; }
-    .confetti{ opacity:0; transition:opacity 450ms ease; }
+    .hearts { opacity: 0.35; z-index: 2; }
+    .confetti { opacity: 0; z-index: 4; transition: opacity 350ms ease; }
+    .sparks { opacity: 0; z-index: 4; transition: opacity 350ms ease; }
 
-    .float{
-      position:absolute;
-      transform: translateY(120vh);
+    .heart {
+      position: absolute;
+      font-size: 22px;
       animation: floatUp linear infinite;
-      user-select:none;
-      filter: drop-shadow(0 6px 12px rgba(255,45,85,0.14));
+      transform: translateY(120vh);
+      user-select: none;
     }
-    @keyframes floatUp{
-      from{ transform: translateY(120vh) translateX(0) rotate(0deg); }
-      to  { transform: translateY(-20vh) translateX(48px) rotate(22deg); }
-    }
-
-    .spark{
-      position:absolute;
-      width:6px; height:6px;
-      border-radius:999px;
-      animation: burst 900ms ease-out forwards;
-      box-shadow:0 0 18px rgba(255,255,255,0.7);
-    }
-    @keyframes burst{
-      0%{ transform: translate(-50%,-50%) scale(0.7); opacity:0; }
-      15%{ opacity:1; }
-      100%{ transform: translate(-50%,-50%) scale(2.4); opacity:0; }
+    @keyframes floatUp {
+      from { transform: translateY(120vh) translateX(0) rotate(0deg); }
+      to   { transform: translateY(-20vh) translateX(40px) rotate(25deg); }
     }
 
-    .conf{
-      position:absolute;
-      width:10px; height:14px;
-      border-radius:4px;
-      opacity:0.95;
+    .conf {
+      position: absolute;
+      width: 10px;
+      height: 14px;
+      border-radius: 4px;
       transform: translateY(-10vh) rotate(0deg);
       animation: confFall linear forwards;
+      opacity: 0.95;
     }
-    @keyframes confFall{
-      to{
-        transform: translateY(110vh) rotate(560deg);
-        opacity:1;
+    @keyframes confFall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
       }
     }
 
-    .card{
-      width:min(820px, calc(100vw - 32px));
-      background:var(--card);
-      border:1px solid var(--cardBorder);
-      border-radius:32px;
+    .spark {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      animation: sparkPop 900ms ease-out forwards;
+      box-shadow: 0 0 18px rgba(255,255,255,0.7);
+    }
+    @keyframes sparkPop {
+      0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+    }
+
+    .card {
+      width: min(720px, calc(100vw - 32px));
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 28px;
       box-shadow: var(--shadow);
-      padding:30px 26px;
-      backdrop-filter: blur(12px);
-      position:relative;
-      z-index:3;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 3;
     }
 
-    .title{
-      font-size: clamp(30px, 4vw, 50px);
-      line-height:1.06;
-      margin:0 0 10px;
-      letter-spacing:-0.03em;
-      text-align:center;
+    .title {
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
+    .subtitle {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: 16px;
+      opacity: 0.85;
+      min-height: 22px;
     }
 
-    .subtitle{
-      margin:0 0 18px;
-      text-align:center;
-      font-size:16px;
-      color:var(--muted);
-      min-height:24px;
+    .stage {
+      position: relative;
+      height: 240px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.7);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
     }
 
-    .stage{
-      position:relative;
-      height:320px;
-      border-radius:26px;
-      background: rgba(255,255,255,0.58);
-      border:1px solid rgba(255,255,255,0.78);
-      overflow:hidden;
+    .buttons {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
     }
 
-    /* Buttons are absolutely positioned by JS */
-    .btn{
-      appearance:none;
-      border:0;
-      border-radius:999px;
-      padding:14px 22px;
-      font-size:18px;
-      font-weight:900;
-      cursor:pointer;
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
       transition: transform 0.12s ease, filter 0.12s ease;
       box-shadow: 0 14px 30px rgba(0,0,0,0.14);
-      user-select:none;
-      white-space:nowrap;
-      position:absolute;
-      z-index:5;
+      user-select: none;
+      white-space: nowrap;
     }
-    .btn:active{ transform:scale(0.98); }
-    .btn:hover{ filter:brightness(1.02); }
+    button:active { transform: scale(0.98); }
+    .yes { background: var(--yes); color: white; }
+    .no  { background: var(--no);  color: white; }
 
-    #yesBtn{
-      background: linear-gradient(135deg, var(--yes1), var(--yes2));
-      color:#fff;
-    }
-    #noBtn{
-      background: linear-gradient(135deg, var(--no1), var(--no2));
-      color:#fff;
+    .row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
-    .hint{
-      margin-top:14px;
-      text-align:center;
-      opacity:0.82;
-      font-size:14px;
-      color: rgba(31,31,31,0.72);
-    }
-    .tiny{
-      margin-top:10px;
-      font-size:12px;
-      opacity:0.65;
-      text-align:center;
-      color: rgba(31,31,31,0.65);
+    .hint {
+      margin-top: 16px;
+      text-align: center;
+      opacity: 0.75;
+      font-size: 14px;
+      min-height: 18px;
     }
 
-    .success{
-      display:none;
-      text-align:center;
-      padding:26px 18px;
+    .success {
+      display: none;
+      text-align: center;
+      padding: 14px 0 0;
     }
-    .success .emoji{ font-size:56px; }
-    .success h2{
-      margin:10px 0 6px;
-      font-size:30px;
-      letter-spacing:-0.02em;
+    .success h2 {
+      margin: 10px 0 6px;
+      font-size: 28px;
     }
-    .success p{
-      margin:0;
-      font-size:16px;
-      color: rgba(31,31,31,0.78);
-      line-height:1.55;
+    .success p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 16px;
+      line-height: 1.5;
     }
-    .badge{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      justify-content:center;
-      margin-top:14px;
-      background: rgba(34,197,94,0.14);
-      border:1px solid rgba(34,197,94,0.30);
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 14px;
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.35);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 700;
     }
 
-    @media (max-width: 520px){
-      .sticker{ width:92px; padding:6px; border-radius:14px; }
-      .btn{ font-size:16px; padding:12px 18px; }
-      .stage{ height:360px; }
+    .tiny {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 520px) {
+      .sticker { width: 92px; padding: 6px; border-radius: 14px; }
+      button { font-size: 16px; padding: 12px 18px; }
+      .stage { height: 300px; }
     }
   </style>
 </head>
-
 <body>
-  <div class="glow"></div>
-
   <div class="stickers" id="stickers"></div>
 
   <div class="hearts" id="hearts"></div>
-  <div class="sparks" id="sparks"></div>
   <div class="confetti" id="confetti"></div>
+  <div class="sparks" id="sparks"></div>
 
-  <main class="card">
-    <h1 class="title">Will you be my valentine forever, bubu? 💘</h1>
-    <p class="subtitle" id="subtitle"></p>
+  <main class="card" id="card">
+    <h1 class="title">Will you be my valentine forever, <span aria-label="bubu">bubu</span>? 💘</h1>
+    <p class="subtitle" id="subtitle">Pick wisely… because “No” is shy today 😈</p>
 
     <section class="stage" id="stage" aria-label="Valentine choice area">
-      <button class="btn" id="yesBtn">Yes 💚</button>
-      <button class="btn" id="noBtn">No 🙃</button>
+      <div class="buttons">
+        <div class="row" id="btnRow">
+          <button class="yes" id="yesBtn">Yes 💚</button>
+          <button class="no" id="noBtn">No 🙃</button>
+        </div>
+      </div>
 
       <div class="success" id="success">
-        <div class="emoji">🥹💘✨</div>
-        <h2>Yayyyy! You just made my heart melt 💍</h2>
+        <div style="font-size:52px;">🥹💘✨</div>
+        <h2>Yayyyyy! It’s a forever date 💍</h2>
         <p>
-          Okay bubu… you’re officially my forever valentine 💗<br/>
-          Now come here, I’m claiming hugs for life 😌🫶
+          Okay bubu, now you’re officially stuck with me 😌<br/>
+          Come here — hugs & kisses subscription activated 🫶
         </p>
         <div class="badge">✅ “Yes” locked in forever</div>
       </div>
     </section>
 
-    <div class="hint" id="hint">Hover “No”… it gets shy 🙈</div>
+    <div class="hint" id="hint">Try hovering “No” if you dare 👀</div>
     <div class="tiny" id="tiny">No attempts blocked: 0 😌</div>
+
+    <div class="footer">Made with ❤️ — share this link once you host it.</div>
   </main>
 
   <script>
-    /***********************
-     * 0) Cute typing subtitle
-     ***********************/
-    const subtitleEl = document.getElementById("subtitle");
-    const lines = [
-      "I made this tiny page just to ask you one thing… 🥹",
-      "You + me… feels like a forever kind of story 💞",
-      "Now choose wisely… because “No” gets shy 😌"
-    ];
-    let li = 0, ci = 0;
-    function typeLine(){
-      const text = lines[li];
-      subtitleEl.textContent = text.slice(0, ci++);
-      if (ci <= text.length) return setTimeout(typeLine, 26);
-      setTimeout(() => { li = (li + 1) % lines.length; ci = 0; typeLine(); }, 1100);
-    }
-    typeLine();
-
-    /***********************
-     * 1) Stickers on edges (10 images)
-     * Put files in /assets: 01.webp ... 10.webp (or edit names below)
-     ***********************/
-    const stickersWrap = document.getElementById("stickers");
+    /********************
+     * OPTIONAL STICKERS
+     * Put these in your repo: assets/1.webp ... assets/10.webp (or change paths here)
+     ********************/
     const STICKER_URLS = [
-      "assets/01.webp",
-      "assets/02.webp",
-      "assets/03.webp",
-      "assets/04.webp",
-      "assets/05.jpg",
-      "assets/06.webp",
-      "assets/07.webp",
-      "assets/08.webp",
-      "assets/09.webp",
+      "assets/1.webp",
+      "assets/2.webp",
+      "assets/3.webp",
+      "assets/4.webp",
+      "assets/5.jpg",
+      "assets/6.webp",
+      "assets/7.webp",
+      "assets/8.webp",
+      "assets/9.webp",
       "assets/10.webp",
     ];
 
-    const positions = [
+    const stickersWrap = document.getElementById("stickers");
+    const stickerPos = [
       { top: "14px", left: "14px", rot: "-12deg" },
-      { top: "20px", left: "calc(50% - 60px)", rot: "8deg" },
       { top: "14px", right: "14px", rot: "12deg" },
-
-      { top: "calc(50% - 70px)", left: "12px", rot: "10deg" },
-      { top: "calc(50% - 10px)", right: "12px", rot: "-10deg" },
-
       { bottom: "14px", left: "14px", rot: "10deg" },
-      { bottom: "18px", left: "calc(50% - 64px)", rot: "-8deg" },
       { bottom: "14px", right: "14px", rot: "-12deg" },
-
-      { top: "110px", right: "40px", rot: "6deg" },
-      { bottom: "110px", left: "40px", rot: "-6deg" },
+      { top: "22px", left: "calc(50% - 60px)", rot: "6deg" },
+      { bottom: "22px", left: "calc(50% - 60px)", rot: "-6deg" },
+      { top: "110px", left: "18px", rot: "8deg" },
+      { top: "110px", right: "18px", rot: "-8deg" },
+      { bottom: "110px", left: "18px", rot: "-6deg" },
+      { bottom: "110px", right: "18px", rot: "6deg" },
     ];
 
     STICKER_URLS.forEach((src, i) => {
       const frame = document.createElement("div");
       frame.className = "sticker";
-      const p = positions[i % positions.length];
+      const p = stickerPos[i % stickerPos.length];
       frame.style.setProperty("--rot", p.rot);
       Object.keys(p).forEach(k => { if (k !== "rot") frame.style[k] = p[k]; });
 
       const img = document.createElement("img");
       img.src = src;
-      img.alt = "bubu dudu sticker";
+      img.alt = "cute sticker";
       img.loading = "lazy";
-      img.onerror = () => frame.remove();
+      img.onerror = () => frame.remove(); // if not found, skip silently
 
       frame.appendChild(img);
       stickersWrap.appendChild(frame);
     });
 
-    /***********************
-     * 2) Floating hearts background
-     ***********************/
+    /********************
+     * HEARTS BACKGROUND
+     ********************/
     const heartsWrap = document.getElementById("hearts");
-    const floatEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨","🌸"];
-    function spawnFloat(extraFast=false){
+    const heartEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨","🌸"];
+    let heartFastMode = false;
+    let heartInterval = null;
+
+    const makeHeart = () => {
       const el = document.createElement("div");
-      el.className = "float";
-      el.textContent = floatEmojis[Math.floor(Math.random() * floatEmojis.length)];
+      el.className = "heart";
+      el.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
       el.style.left = Math.random() * 100 + "vw";
-      el.style.animationDuration = (extraFast ? (4 + Math.random() * 5) : (7 + Math.random() * 10)) + "s";
-      el.style.fontSize = (16 + Math.random() * 24) + "px";
-      el.style.opacity = (0.22 + Math.random() * 0.55);
+      el.style.animationDuration = (heartFastMode ? (3.8 + Math.random() * 4.5) : (6 + Math.random() * 10)) + "s";
+      el.style.fontSize = (16 + Math.random() * 22) + "px";
+      el.style.opacity = (0.25 + Math.random() * 0.6);
       el.style.animationDelay = (-Math.random() * 10) + "s";
       heartsWrap.appendChild(el);
-      setTimeout(() => el.remove(), 20000);
-    }
-    for (let i = 0; i < 28; i++) spawnFloat(false);
-    let floatInterval = setInterval(() => spawnFloat(false), 650);
+      setTimeout(() => el.remove(), 17000);
+    };
 
-    /***********************
-     * 3) Fireworks + confetti
-     ***********************/
-    const sparksWrap = document.getElementById("sparks");
+    for (let i = 0; i < 24; i++) makeHeart();
+    heartInterval = setInterval(makeHeart, 600);
+
+    /********************
+     * CONFETTI + FIREWORKS
+     ********************/
     const confettiWrap = document.getElementById("confetti");
+    const sparksWrap = document.getElementById("sparks");
     let celebrateOn = false;
-    let sparkInterval = null;
-    let confInterval = null;
+    let confInt = null;
+    let sparkInt = null;
+
+    function spawnConfetti() {
+      if (!celebrateOn) return;
+      const c = document.createElement("div");
+      c.className = "conf";
+      c.style.left = (Math.random() * 100) + "vw";
+      c.style.animationDuration = (2.6 + Math.random() * 2.6) + "s";
+      const hues = [330, 345, 10, 45, 170, 200, 280];
+      const h = hues[Math.floor(Math.random() * hues.length)];
+      c.style.background = `hsl(${h} 90% 70%)`;
+      confettiWrap.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }
 
     function sparkBurst() {
       if (!celebrateOn) return;
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight * 0.85;
-      const count = 10 + Math.floor(Math.random() * 10);
+      const count = 10 + Math.floor(Math.random() * 12);
       const hues = [330, 345, 10, 45, 170, 200, 280];
 
       for (let i = 0; i < count; i++) {
@@ -396,251 +379,180 @@
         s.style.top  = y + "px";
         const h = hues[Math.floor(Math.random() * hues.length)];
         s.style.background = `hsl(${h} 90% 70%)`;
-
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 30 + Math.random() * 90;
-        const dx = Math.cos(angle) * dist;
-        const dy = Math.sin(angle) * dist;
-
-        s.animate([
-          { transform: "translate(-50%, -50%) scale(0.7)", opacity: 0 },
-          { transform: "translate(-50%, -50%) scale(1)", opacity: 1, offset: 0.15 },
-          { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(2.3)`, opacity: 0 }
-        ], { duration: 900, easing: "ease-out", fill: "forwards" });
-
         sparksWrap.appendChild(s);
         setTimeout(() => s.remove(), 950);
       }
     }
 
-    function spawnConfetti(){
-      if (!celebrateOn) return;
-      const c = document.createElement("div");
-      c.className = "conf";
-      c.style.left = (Math.random() * 100) + "vw";
-      c.style.animationDuration = (2.8 + Math.random() * 2.4) + "s";
-      const hues = [330, 345, 10, 45, 170, 200, 280];
-      const h = hues[Math.floor(Math.random() * hues.length)];
-      c.style.background = `hsl(${h} 90% 70%)`;
-      confettiWrap.appendChild(c);
-      setTimeout(() => c.remove(), 6000);
-    }
-
-    function startCelebration(){
+    function startCelebration() {
       celebrateOn = true;
-      sparksWrap.style.opacity = "1";
       confettiWrap.style.opacity = "1";
+      sparksWrap.style.opacity = "1";
 
-      clearInterval(floatInterval);
-      floatInterval = setInterval(() => spawnFloat(true), 220);
+      // more hearts
+      heartFastMode = true;
+      clearInterval(heartInterval);
+      heartInterval = setInterval(makeHeart, 220);
+      for (let i = 0; i < 25; i++) makeHeart();
 
-      for (let i = 0; i < 10; i++) setTimeout(sparkBurst, i * 170);
-      sparkInterval = setInterval(sparkBurst, 520);
-
+      // confetti + fireworks
       for (let i = 0; i < 25; i++) setTimeout(spawnConfetti, i * 80);
-      confInterval = setInterval(spawnConfetti, 110);
+      confInt = setInterval(spawnConfetti, 120);
+
+      for (let i = 0; i < 8; i++) setTimeout(sparkBurst, i * 180);
+      sparkInt = setInterval(sparkBurst, 520);
     }
 
-    /***********************
-     * 4) YES/NO logic (FINAL FIXED)
-     ***********************/
+    /********************
+     * FIXED YES/NO LOGIC (based on your working version)
+     ********************/
     const stage = document.getElementById("stage");
+    const btnRow = document.getElementById("btnRow");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn  = document.getElementById("noBtn");
     const success = document.getElementById("success");
     const hint = document.getElementById("hint");
     const tiny = document.getElementById("tiny");
-
-    const GAP = 16;
-    const PAD = 14;
-    const SAFE_GAP = 22;   // extra space around YES so NO never overlaps
-    const FAR = 110;       // how far left/right NO tries to go
-    const COOLDOWN_MS = 160;
+    const subtitle = document.getElementById("subtitle");
 
     let blocks = 0;
-    let placeRightNext = true;
-    let noCooldownUntil = 0;
+    let sideRightNext = true;          // alternate left/right far
+    let cooldownUntil = 0;
+    let noMsgTimer = null;
 
+    const originalNoText = "No 🙃";
     const cuteMsgs = [
-      "Rethink? 🥺",
-      "Awww no? 🙈",
-      "Pls choose Yes 💞",
-      "Bubu… really? 🥹",
-      "Click Yes na 😌",
-      "Say yesss 🩷",
-      "I’m blushing 😳"
+      "Hehe nope 😜",
+      "Pick Yes na 🥺",
+      "Awww… 💞",
+      "Try again 😌",
+      "Yes looks cute 🩷",
+      "Don’t be mean 🙈",
+      "Come on bubu 🥹"
     ];
 
-    let msgTimer = null;
-    const originalNoText = "No 🙃";
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-    function rectInStage(btn){
-      const s = stage.getBoundingClientRect();
-      const r = btn.getBoundingClientRect();
-      return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height };
-    }
-
-    function setPos(btn, x, y){
-      const s = stage.getBoundingClientRect();
-      const w = btn.offsetWidth;
-      const h = btn.offsetHeight;
-      btn.style.left = clamp(x, PAD, s.width - w - PAD) + "px";
-      btn.style.top  = clamp(y, PAD, s.height - h - PAD) + "px";
-    }
-
-    function overlaps(a, b){
-      return !(
-        a.x + a.w + SAFE_GAP <= b.x ||
-        b.x + b.w + SAFE_GAP <= a.x ||
-        a.y + a.h + SAFE_GAP <= b.y ||
-        b.y + b.h + SAFE_GAP <= a.y
-      );
-    }
-
-    function lockNoWidth(){
-      // Prevent NO resizing when showing cute messages
-      const w = noBtn.offsetWidth;
-      noBtn.style.width = w + "px";
-    }
-
-    function layoutInitial(){
-      // place YES and NO side-by-side centered (ABSOLUTE from start)
-      // YES fixed, NO starts right next to YES
-      const s = stage.getBoundingClientRect();
-
-      // temporarily clear widths to measure properly
-      noBtn.style.width = "";
-      noBtn.style.height = "";
-
-      // ensure buttons are measurable
-      yesBtn.style.left = "0px";
-      yesBtn.style.top  = "0px";
-      noBtn.style.left  = "0px";
-      noBtn.style.top   = "0px";
-
-      // measure
-      const yesW = yesBtn.offsetWidth;
-      const yesH = yesBtn.offsetHeight;
-      const noW  = noBtn.offsetWidth;
-      const noH  = noBtn.offsetHeight;
-
-      const centerX = s.width / 2;
-      const centerY = s.height / 2;
-
-      const totalW = yesW + GAP + noW;
-
-      const yesX = centerX - totalW / 2;
-      const yesY = centerY - yesH / 2;
-
-      const noX  = yesX + yesW + GAP;
-      const noY  = centerY - noH / 2;
-
-      setPos(yesBtn, yesX, yesY);
-      setPos(noBtn,  noX,  noY);
-
-      lockNoWidth(); // now lock NO width forever
-    }
-
-    function showCuteMsg(){
+    function setNoTempText() {
       const msg = cuteMsgs[Math.floor(Math.random() * cuteMsgs.length)];
       noBtn.textContent = msg;
-      if (msgTimer) clearTimeout(msgTimer);
-      msgTimer = setTimeout(() => { noBtn.textContent = originalNoText; }, 1000);
+      if (noMsgTimer) clearTimeout(noMsgTimer);
+      noMsgTimer = setTimeout(() => { noBtn.textContent = originalNoText; }, 1000);
     }
 
-    function pickSpot(sideRight){
-      const s = stage.getBoundingClientRect();
-      const yes = rectInStage(yesBtn);
+    function dodgeNoButton() {
+      const now = Date.now();
+      if (now < cooldownUntil) return;
+      cooldownUntil = now + 160;
+
+      blocks++;
+      tiny.textContent = `No attempts blocked: ${blocks} 😌`;
+      hint.textContent = "Nice try. 😏";
+      setNoTempText();
+
+      const rect = stage.getBoundingClientRect();
+      const pad = 18;
+
+      // Make NO absolute inside stage AFTER first dodge (so it can move freely)
+      noBtn.style.position = "absolute";
+
+      // lock width so cute text doesn't resize and cause weird jumps
+      if (!noBtn.style.minWidth) {
+        const w = noBtn.offsetWidth;
+        noBtn.style.minWidth = w + "px";
+        noBtn.style.textAlign = "center";
+      }
+
+      // YES stays in the row position (center). We'll protect that zone.
+      const yesRect = yesBtn.getBoundingClientRect();
+      const yes = {
+        x: yesRect.left - rect.left,
+        y: yesRect.top  - rect.top,
+        w: yesRect.width,
+        h: yesRect.height
+      };
 
       const nW = noBtn.offsetWidth;
       const nH = noBtn.offsetHeight;
 
-      const rightMin = yes.x + yes.w + FAR;
-      const rightMax = s.width - nW - PAD;
+      const SAFE = 22;   // buffer so NO never overlaps YES
+      const FAR  = 110;  // ensure it runs far left/right alternately
 
-      const leftMin  = PAD;
-      const leftMax  = yes.x - nW - FAR;
+      // candidate x range based on side preference
+      let minX, maxX;
+      if (sideRightNext) {
+        minX = yes.x + yes.w + FAR;
+        maxX = rect.width - nW - pad;
+        if (minX > maxX) { // fallback anywhere
+          minX = pad;
+          maxX = rect.width - nW - pad;
+        }
+      } else {
+        minX = pad;
+        maxX = yes.x - nW - FAR;
+        if (minX > maxX) { // fallback anywhere
+          minX = pad;
+          maxX = rect.width - nW - pad;
+        }
+      }
 
-      const preferSideOk = sideRight ? (rightMin <= rightMax) : (leftMin <= leftMax);
-
+      // Try multiple times to find a spot that doesn't overlap YES
       let best = null;
+      for (let i = 0; i < 80; i++) {
+        const x = minX + Math.random() * (maxX - minX);
+        const y = pad + Math.random() * (rect.height - nH - pad * 2);
 
-      for (let i = 0; i < 90; i++){
-        let x;
-        if (preferSideOk){
-          x = sideRight
-            ? (rightMin + Math.random() * (rightMax - rightMin))
-            : (leftMin  + Math.random() * (leftMax  - leftMin));
-        } else {
-          // fallback anywhere (still no overlap guaranteed by checks)
-          x = PAD + Math.random() * (s.width - nW - PAD*2);
-        }
+        const cand = { x, y, w: nW, h: nH };
+        const overlap =
+          !(cand.x + cand.w + SAFE <= yes.x ||
+            yes.x + yes.w + SAFE <= cand.x ||
+            cand.y + cand.h + SAFE <= yes.y ||
+            yes.y + yes.h + SAFE <= cand.y);
 
-        const y = PAD + Math.random() * (s.height - nH - PAD*2);
-        const cand = { x, y, w:nW, h:nH };
-
-        if (!overlaps(cand, yes)){
-          const cX = x + nW/2, cY = y + nH/2;
-          const yCX = yes.x + yes.w/2, yCY = yes.y + yes.h/2;
-          const d = (cX - yCX)**2 + (cY - yCY)**2;
-          if (!best || d > best.d) best = { x, y, d };
+        if (!overlap) {
+          best = cand;
+          break;
         }
       }
 
-      if (!best){
-        best = { x: sideRight ? (s.width - nW - PAD) : PAD, y: PAD + Math.random() * (s.height - nH - PAD*2) };
+      if (!best) {
+        // worst-case fallback (still clamped) — keep it visible
+        best = {
+          x: sideRightNext ? (rect.width - nW - pad) : pad,
+          y: pad + Math.random() * (rect.height - nH - pad * 2),
+          w: nW,
+          h: nH
+        };
       }
-      return best;
-    }
 
-    function runAway(){
-      const now = Date.now();
-      if (now < noCooldownUntil) return;
-      noCooldownUntil = now + COOLDOWN_MS;
+      // Alternate next time
+      sideRightNext = !sideRightNext;
 
-      blocks++;
-      tiny.textContent = `No attempts blocked: ${blocks} 😌`;
-      hint.textContent = "Hehe… it’s shy 😌💗";
-
-      showCuteMsg();
-
-      const spot = pickSpot(placeRightNext);
-      placeRightNext = !placeRightNext;
-
-      // Important: prevent hover re-trigger loop by disabling pointer events briefly
+      // Prevent hover-loop “disappear” issue: briefly disable pointer events while moving
       noBtn.style.pointerEvents = "none";
       requestAnimationFrame(() => {
-        setPos(noBtn, spot.x, spot.y);
+        noBtn.style.left = clamp(best.x, pad, rect.width - nW - pad) + "px";
+        noBtn.style.top  = clamp(best.y, pad, rect.height - nH - pad) + "px";
         setTimeout(() => { noBtn.style.pointerEvents = ""; }, 120);
       });
     }
 
-    function onYes(){
-      yesBtn.style.display = "none";
-      noBtn.style.display = "none";
-
+    function showSuccess() {
+      btnRow.style.display = "none";
       success.style.display = "block";
-      hint.textContent = "Awww… you picked YES 💘";
-
+      hint.textContent = "Good choice 😌💘";
+      subtitle.textContent = "Okay bubu… now it’s official 💍";
+      for (let i = 0; i < 18; i++) makeHeart();
       startCelebration();
-      for (let i = 0; i < 28; i++) spawnFloat(true);
-      for (let i = 0; i < 7; i++) setTimeout(sparkBurst, i * 180);
     }
 
-    // events
-    yesBtn.addEventListener("click", onYes);
-    noBtn.addEventListener("pointerenter", runAway);
-    noBtn.addEventListener("click", (e) => { e.preventDefault(); runAway(); });
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); runAway(); }, { passive:false });
+    // YES click => success
+    yesBtn.addEventListener("click", showSuccess);
 
-    // layout once + on resize
-    window.addEventListener("load", layoutInitial);
-    window.addEventListener("resize", () => {
-      // keep YES fixed + keep NO somewhere safe, re-center if still near start
-      layoutInitial();
-    });
+    // NO hover/touch/click => run away (never overlaps YES, stays visible)
+    noBtn.addEventListener("mouseenter", dodgeNoButton);
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); dodgeNoButton(); });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodgeNoButton(); }, { passive: false });
   </script>
 </body>
 </html>
