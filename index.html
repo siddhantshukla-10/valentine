@@ -6,36 +6,37 @@
   <title>Will you be my valentine forever, bubu? 💘</title>
 
   <style>
-    :root {
-      --bg1: #ffdde1;
-      --bg2: #ee9ca7;
-      --bg3: #fff5f7;
-      --bg4: #ffe4e6;
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --bg3:#fff5f7;
+      --bg4:#ffe4e6;
 
-      --card: rgba(255,255,255,0.78);
-      --cardBorder: rgba(255,255,255,0.78);
+      --card: rgba(255,255,255,0.80);
+      --cardBorder: rgba(255,255,255,0.80);
 
-      --text: #1f1f1f;
+      --text:#1f1f1f;
       --muted: rgba(31,31,31,0.72);
 
-      --yes: #22c55e;
-      --no: #ff4d6d;
+      --yes:#22c55e;
+      --no:#ff4d6d;
 
       --shadow: 0 24px 70px rgba(0,0,0,0.14);
       --shadow2: 0 10px 30px rgba(255,45,85,0.18);
     }
 
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color: var(--text);
-      overflow: hidden;
+      color:var(--text);
+      overflow:hidden;
 
+      /* Always cute (no black background) */
       background:
         radial-gradient(1100px 760px at 18% 10%, var(--bg1), transparent 60%),
         radial-gradient(1100px 760px at 82% 88%, var(--bg2), transparent 62%),
@@ -43,221 +44,274 @@
         linear-gradient(135deg, var(--bg3), var(--bg4));
     }
 
-    .glow {
-      position: fixed;
-      inset: -20%;
-      pointer-events: none;
-      z-index: 0;
+    /* Soft glow layer */
+    .glow{
+      position:fixed;
+      inset:-20%;
+      pointer-events:none;
+      z-index:0;
       background:
         radial-gradient(700px 500px at 25% 30%, rgba(255,45,85,0.18), transparent 60%),
         radial-gradient(700px 500px at 75% 70%, rgba(255,105,180,0.20), transparent 60%),
         radial-gradient(600px 450px at 55% 15%, rgba(255,200,220,0.22), transparent 60%);
       filter: blur(6px);
-      opacity: 0.95;
+      opacity:0.95;
     }
 
-    .hearts, .sparks {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
+    /* Bubu/Dudu photo frames around edges */
+    .stickers{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
     }
-    .hearts { opacity: 0.40; }
-    .sparks { opacity: 0.0; transition: opacity 500ms ease; } /* off until celebration */
 
-    .float {
-      position: absolute;
+    .sticker{
+      position:fixed;
+      width:120px;
+      height:auto;
+      border-radius:16px;
+      background: rgba(255,255,255,0.55);
+      padding:8px;
+      border:1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+      transform: rotate(var(--rot)) translateZ(0);
+      opacity:0.92;
+      backdrop-filter: blur(6px);
+    }
+    .sticker img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:12px;
+    }
+
+    /* Floating hearts layer */
+    .hearts, .sparks, .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:2;
+    }
+    .hearts{ opacity:0.42; }
+    .sparks{ opacity:0; transition:opacity 450ms ease; }
+    .confetti{ opacity:0; transition:opacity 450ms ease; }
+
+    .float{
+      position:absolute;
       transform: translateY(120vh);
       animation: floatUp linear infinite;
-      user-select: none;
+      user-select:none;
       filter: drop-shadow(0 6px 12px rgba(255,45,85,0.14));
     }
-    @keyframes floatUp {
-      from { transform: translateY(120vh) translateX(0) rotate(0deg); }
-      to   { transform: translateY(-20vh) translateX(48px) rotate(22deg); }
+    @keyframes floatUp{
+      from{ transform: translateY(120vh) translateX(0) rotate(0deg); }
+      to  { transform: translateY(-20vh) translateX(48px) rotate(22deg); }
     }
 
     /* Firework sparkles */
-    .spark {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
+    .spark{
+      position:absolute;
+      width:6px; height:6px;
+      border-radius:999px;
       animation: burst 900ms ease-out forwards;
-      box-shadow: 0 0 18px rgba(255,255,255,0.7);
+      box-shadow:0 0 18px rgba(255,255,255,0.7);
     }
-    @keyframes burst {
-      0%   { transform: translate(-50%, -50%) scale(0.7); opacity: 0.0; }
-      15%  { opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+    @keyframes burst{
+      0%{ transform: translate(-50%,-50%) scale(0.7); opacity:0; }
+      15%{ opacity:1; }
+      100%{ transform: translate(-50%,-50%) scale(2.4); opacity:0; }
     }
 
-    .card {
-      width: min(780px, calc(100vw - 32px));
-      background: var(--card);
-      border: 1px solid var(--cardBorder);
-      border-radius: 30px;
+    /* Confetti */
+    .conf{
+      position:absolute;
+      width:10px; height:14px;
+      border-radius:4px;
+      opacity:0.95;
+      transform: translateY(-10vh) rotate(0deg);
+      animation: confFall linear forwards;
+    }
+    @keyframes confFall{
+      to{
+        transform: translateY(110vh) rotate(560deg);
+        opacity:1;
+      }
+    }
+
+    /* Main card */
+    .card{
+      width:min(800px, calc(100vw - 32px));
+      background:var(--card);
+      border:1px solid var(--cardBorder);
+      border-radius:32px;
       box-shadow: var(--shadow), var(--shadow2);
-      padding: 30px 26px;
+      padding:30px 26px;
       backdrop-filter: blur(12px);
-      position: relative;
-      z-index: 2;
+      position:relative;
+      z-index:3;
     }
 
-    .title {
-      font-size: clamp(30px, 4vw, 48px);
-      line-height: 1.06;
-      margin: 0 0 10px;
-      letter-spacing: -0.03em;
-      text-align: center;
+    .title{
+      font-size: clamp(30px, 4vw, 50px);
+      line-height:1.06;
+      margin:0 0 10px;
+      letter-spacing:-0.03em;
+      text-align:center;
     }
 
-    .subtitle {
-      margin: 0 0 18px;
-      text-align: center;
-      font-size: 16px;
-      color: var(--muted);
-      min-height: 24px;
+    .subtitle{
+      margin:0 0 18px;
+      text-align:center;
+      font-size:16px;
+      color:var(--muted);
+      min-height:24px;
     }
 
-    .stage {
-      position: relative;
-      height: 270px;
-      border-radius: 24px;
+    .stage{
+      position:relative;
+      height:280px;
+      border-radius:26px;
       background: rgba(255,255,255,0.58);
-      border: 1px solid rgba(255,255,255,0.75);
-      overflow: hidden;
+      border:1px solid rgba(255,255,255,0.78);
+      overflow:hidden;
     }
 
-    .row {
-      position: absolute;
-      left: 50%;
-      top: 52%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: center;
+    /* Buttons start side-by-side */
+    .row{
+      position:absolute;
+      left:50%;
+      top:52%;
+      transform: translate(-50%,-50%);
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:center;
+      width: min(520px, 92%);
     }
 
-    .btn {
-      appearance: none;
-      border: 0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius:999px;
+      padding:14px 22px;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
       transition: transform 0.12s ease, filter 0.12s ease;
       box-shadow: 0 14px 30px rgba(0,0,0,0.14);
-      user-select: none;
-      white-space: nowrap;
+      user-select:none;
+      white-space:nowrap;
     }
-    .btn:active { transform: scale(0.98); }
-    .btn:hover { filter: brightness(1.02); }
+    .btn:active{ transform:scale(0.98); }
+    .btn:hover{ filter:brightness(1.02); }
 
-    #yesBtn {
+    #yesBtn{
       background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: white;
+      color:#fff;
     }
-    #noBtn {
+    #noBtn{
       background: linear-gradient(135deg, #ff4d6d, #ff1f5a);
-      color: white;
-      position: absolute; /* becomes absolute after first dodge */
-      left: 0; top: 0;
+      color:#fff;
+      position:absolute; /* becomes meaningful after we detach */
+      left:0; top:0;
     }
 
-    .success {
-      display: none;
-      text-align: center;
-      padding: 22px 18px;
-    }
-    .success .emoji { font-size: 54px; }
-    .success h2 {
-      margin: 10px 0 6px;
-      font-size: 30px;
-      letter-spacing: -0.02em;
-    }
-    .success p {
-      margin: 0;
-      font-size: 16px;
-      color: rgba(31,31,31,0.78);
-      line-height: 1.5;
-    }
-    .badge {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      margin-top: 14px;
-      background: rgba(34,197,94,0.14);
-      border: 1px solid rgba(34,197,94,0.30);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 900;
-    }
-
-    .hint {
-      margin-top: 14px;
-      text-align: center;
-      opacity: 0.78;
-      font-size: 14px;
+    .hint{
+      margin-top:14px;
+      text-align:center;
+      opacity:0.82;
+      font-size:14px;
       color: rgba(31,31,31,0.72);
     }
-    .tiny {
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.6;
-      text-align: center;
+    .tiny{
+      margin-top:10px;
+      font-size:12px;
+      opacity:0.65;
+      text-align:center;
       color: rgba(31,31,31,0.65);
     }
 
-    @media (max-width: 420px){
-      .btn { font-size: 16px; padding: 12px 18px; }
-      .stage { height: 300px; }
-      .row { gap: 12px; }
+    .success{
+      display:none;
+      text-align:center;
+      padding:24px 18px;
+    }
+    .success .emoji{ font-size:56px; }
+    .success h2{
+      margin:10px 0 6px;
+      font-size:30px;
+      letter-spacing:-0.02em;
+    }
+    .success p{
+      margin:0;
+      font-size:16px;
+      color: rgba(31,31,31,0.78);
+      line-height:1.55;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      margin-top:14px;
+      background: rgba(34,197,94,0.14);
+      border:1px solid rgba(34,197,94,0.30);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:900;
+    }
+
+    @media (max-width: 520px){
+      .sticker{ width:92px; padding:6px; border-radius:14px; }
+      .btn{ font-size:16px; padding:12px 18px; }
+      .stage{ height:320px; }
     }
   </style>
 </head>
 
 <body>
   <div class="glow"></div>
+
+  <!-- Stickers (your 10 images) -->
+  <div class="stickers" id="stickers"></div>
+
+  <!-- Cute background layers -->
   <div class="hearts" id="hearts"></div>
   <div class="sparks" id="sparks"></div>
+  <div class="confetti" id="confetti"></div>
 
   <main class="card">
     <h1 class="title">Will you be my valentine forever, bubu? 💘</h1>
     <p class="subtitle" id="subtitle"></p>
 
     <section class="stage" id="stage" aria-label="Valentine choice area">
-      <!-- ✅ Start: side-by-side -->
       <div class="row" id="btnRow">
         <button class="btn" id="yesBtn">Yes 💚</button>
         <button class="btn" id="noBtn">No 🙃</button>
       </div>
 
-      <!-- ✅ After YES: buttons hidden, message visible -->
       <div class="success" id="success">
         <div class="emoji">🥹💘✨</div>
-        <h2>Yayyyy! Forever it is 💍</h2>
+        <h2>Yayyyy! You just made my heart melt 💍</h2>
         <p>
-          Okay bubu… you just made my heart do a happy dance 💗<br/>
-          Now come here, my forever valentine 😌❤️
+          Okay bubu… you’re officially my forever valentine 💗<br/>
+          Now come here, I’m claiming hugs for life 😌🫶
         </p>
         <div class="badge">✅ “Yes” locked in forever</div>
       </div>
     </section>
 
-    <div class="hint" id="hint">Try hovering “No”… if you dare 👀</div>
+    <div class="hint" id="hint">Hover “No”… it gets shy 🙈</div>
     <div class="tiny" id="tiny">No attempts blocked: 0 😌</div>
   </main>
 
   <script>
-    // ---- Cute rotating subtitle ----
+    // ---------- 1) Romantic typing subtitle ----------
     const subtitleEl = document.getElementById("subtitle");
     const lines = [
       "I made this tiny page just to ask you one thing… 🥹",
-      "You + me… sounds like a forever kind of story 💞",
+      "You + me… feels like a forever kind of story 💞",
       "Now choose wisely… because “No” gets shy 😌"
     ];
     let li = 0, ci = 0;
@@ -265,15 +319,64 @@
       const text = lines[li];
       subtitleEl.textContent = text.slice(0, ci++);
       if (ci <= text.length) return setTimeout(typeLine, 26);
-      setTimeout(() => {
-        li = (li + 1) % lines.length;
-        ci = 0;
-        typeLine();
-      }, 1100);
+      setTimeout(() => { li = (li + 1) % lines.length; ci = 0; typeLine(); }, 1100);
     }
     typeLine();
 
-    // ---- Floating hearts ----
+    // ---------- 2) Add your 10 cute images as "polaroids" around edges ----------
+    const stickersWrap = document.getElementById("stickers");
+
+    // Put your images here (must exist in repo)
+    const STICKER_URLS = [
+      "assets/01.webp",
+      "assets/02.webp",
+      "assets/03.webp",
+      "assets/04.webp",
+      "assets/05.jpg",
+      "assets/06.webp",
+      "assets/07.webp",
+      "assets/08.webp",
+      "assets/09.webp",
+      "assets/10.webp",
+    ];
+
+    // fixed cute positions around corners/sides
+    const positions = [
+      { top: "14px", left: "14px", rot: "-12deg" },
+      { top: "20px", left: "calc(50% - 60px)", rot: "8deg" },
+      { top: "14px", right: "14px", rot: "12deg" },
+
+      { top: "calc(50% - 70px)", left: "12px", rot: "10deg" },
+      { top: "calc(50% - 10px)", right: "12px", rot: "-10deg" },
+
+      { bottom: "14px", left: "14px", rot: "10deg" },
+      { bottom: "18px", left: "calc(50% - 64px)", rot: "-8deg" },
+      { bottom: "14px", right: "14px", rot: "-12deg" },
+
+      { top: "110px", right: "40px", rot: "6deg" },
+      { bottom: "110px", left: "40px", rot: "-6deg" },
+    ];
+
+    STICKER_URLS.forEach((src, i) => {
+      const frame = document.createElement("div");
+      frame.className = "sticker";
+      const p = positions[i % positions.length];
+      frame.style.setProperty("--rot", p.rot);
+      Object.keys(p).forEach(k => { if (k !== "rot") frame.style[k] = p[k]; });
+
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "bubu dudu sticker";
+      img.loading = "lazy";
+
+      // if image missing, hide frame (prevents broken icon)
+      img.onerror = () => frame.remove();
+
+      frame.appendChild(img);
+      stickersWrap.appendChild(frame);
+    });
+
+    // ---------- 3) Floating hearts background ----------
     const heartsWrap = document.getElementById("hearts");
     const floatEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨","🌸"];
     function spawnFloat(extraFast=false){
@@ -291,30 +394,28 @@
     for (let i = 0; i < 28; i++) spawnFloat(false);
     let floatInterval = setInterval(() => spawnFloat(false), 650);
 
-    // ---- Fireworks / sparkles (celebration mode) ----
+    // ---------- 4) Fireworks + confetti (celebration) ----------
     const sparksWrap = document.getElementById("sparks");
+    const confettiWrap = document.getElementById("confetti");
     let celebrateOn = false;
+    let sparkInterval = null;
+    let confInterval = null;
 
     function sparkBurst() {
       if (!celebrateOn) return;
-      // random spot on screen
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight * 0.85;
-
-      // create multiple spark dots in one burst
       const count = 10 + Math.floor(Math.random() * 10);
+      const hues = [330, 345, 10, 45, 170, 200, 280];
+
       for (let i = 0; i < count; i++) {
         const s = document.createElement("div");
         s.className = "spark";
         s.style.left = x + "px";
         s.style.top  = y + "px";
-
-        // random bright colors
-        const hues = [330, 345, 10, 45, 170, 200, 280];
         const h = hues[Math.floor(Math.random() * hues.length)];
         s.style.background = `hsl(${h} 90% 70%)`;
 
-        // shoot outwards
         const angle = Math.random() * Math.PI * 2;
         const dist = 30 + Math.random() * 90;
         const dx = Math.cos(angle) * dist;
@@ -331,23 +432,36 @@
       }
     }
 
-    let sparkInterval = null;
+    function spawnConfetti(){
+      if (!celebrateOn) return;
+      const c = document.createElement("div");
+      c.className = "conf";
+      c.style.left = (Math.random() * 100) + "vw";
+      c.style.animationDuration = (2.8 + Math.random() * 2.4) + "s";
+      c.style.transform = `translateY(-10vh) rotate(${Math.random()*80}deg)`;
+      const hues = [330, 345, 10, 45, 170, 200, 280];
+      const h = hues[Math.floor(Math.random() * hues.length)];
+      c.style.background = `hsl(${h} 90% 70%)`;
+      confettiWrap.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }
 
     function startCelebration(){
       celebrateOn = true;
       sparksWrap.style.opacity = "1";
+      confettiWrap.style.opacity = "1";
 
-      // more hearts
       clearInterval(floatInterval);
-      floatInterval = setInterval(() => spawnFloat(true), 240);
+      floatInterval = setInterval(() => spawnFloat(true), 220);
 
-      // initial bursts
-      for (let i = 0; i < 6; i++) setTimeout(sparkBurst, i * 220);
-      // keep bursting
+      for (let i = 0; i < 8; i++) setTimeout(sparkBurst, i * 220);
       sparkInterval = setInterval(sparkBurst, 520);
+
+      for (let i = 0; i < 20; i++) setTimeout(spawnConfetti, i * 90);
+      confInterval = setInterval(spawnConfetti, 110);
     }
 
-    // ---- Button logic ----
+    // ---------- 5) YES/NO behavior exactly as you want ----------
     const stage = document.getElementById("stage");
     const btnRow = document.getElementById("btnRow");
     const yesBtn = document.getElementById("yesBtn");
@@ -357,12 +471,22 @@
     const tiny = document.getElementById("tiny");
 
     const PAD = 12;
-    const GAP = 18;      // never overlap YES
-    const FAR = 90;      // aim far from YES
+    const SAFE_GAP = 22;  // never overlap YES
+    const FAR = 95;       // runs far left/right from YES
     let blocks = 0;
     let placeRightNext = true;
+    let noDetached = false;
 
-    const cuteMsgs = ["Rethink? 🥺","Nooo 🙈","Pls choose Yes 💞","Bubu… really? 🥹","Try again 😌"];
+    const cuteMsgs = [
+      "Rethink? 🥺",
+      "Awww no? 🙈",
+      "Pls choose Yes 💞",
+      "Bubu… really? 🥹",
+      "Click Yes na 😌",
+      "Say yesss 🩷",
+      "I’m blushing 😳"
+    ];
+
     let msgTimer = null;
 
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
@@ -374,35 +498,24 @@
       el.style.top  = clamp(y, PAD, s.height - h - PAD) + "px";
     }
 
-    function rectInStage(el){
-      return {
-        x: parseFloat(el.style.left || "0"),
-        y: parseFloat(el.style.top  || "0"),
-        w: el.offsetWidth,
-        h: el.offsetHeight
-      };
-    }
-
-    function overlaps(a, b){
+    function overlapsRect(a, b){
       return !(
-        a.x + a.w + GAP <= b.x ||
-        b.x + b.w + GAP <= a.x ||
-        a.y + a.h + GAP <= b.y ||
-        b.y + b.h + GAP <= a.y
+        a.x + a.w + SAFE_GAP <= b.x ||
+        b.x + b.w + SAFE_GAP <= a.x ||
+        a.y + a.h + SAFE_GAP <= b.y ||
+        b.y + b.h + SAFE_GAP <= a.y
       );
     }
 
-    // Convert NO from flex-layout to absolute-position inside stage (first time it runs)
     function detachNoToAbsolute(){
       const stageRect = stage.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
-
-      // position NO exactly where it currently appears
       const x = noRect.left - stageRect.left;
       const y = noRect.top  - stageRect.top;
 
       noBtn.style.position = "absolute";
       setAbsPos(noBtn, x, y);
+      noDetached = true;
     }
 
     function showCuteMsg(){
@@ -411,16 +524,15 @@
       noBtn.textContent = msg;
 
       if (msgTimer) clearTimeout(msgTimer);
-      msgTimer = setTimeout(() => { noBtn.textContent = original; }, 2000);
+      msgTimer = setTimeout(() => { noBtn.textContent = original; }, 1000); // ✅ 1 second then back to NO
     }
 
     function pickSpotOnSide(sideRight){
       const s = stage.getBoundingClientRect();
-
-      // YES location (still in row, but we can read from DOM rects)
-      const yRectAbs = yesBtn.getBoundingClientRect();
       const stageAbs = stage.getBoundingClientRect();
-      const y = {
+      const yRectAbs = yesBtn.getBoundingClientRect();
+
+      const yes = {
         x: yRectAbs.left - stageAbs.left,
         y: yRectAbs.top  - stageAbs.top,
         w: yesBtn.offsetWidth,
@@ -429,79 +541,75 @@
 
       const nW = noBtn.offsetWidth, nH = noBtn.offsetHeight;
 
-      const rightMin = y.x + y.w + FAR;
+      const rightMin = yes.x + yes.w + FAR;
       const rightMax = s.width - nW - PAD;
-
       const leftMin  = PAD;
-      const leftMax  = y.x - nW - FAR;
+      const leftMax  = yes.x - nW - FAR;
 
       const sideOk = sideRight ? (rightMin <= rightMax) : (leftMin <= leftMax);
 
       let best = null;
-      for (let i = 0; i < 70; i++){
+
+      for (let i = 0; i < 80; i++){
         let x;
         if (sideOk){
           x = sideRight
             ? (rightMin + Math.random() * (rightMax - rightMin))
             : (leftMin  + Math.random() * (leftMax  - leftMin));
         } else {
+          // fallback (small screens)
           x = PAD + Math.random() * (s.width - nW - PAD*2);
         }
 
         const yPos = PAD + Math.random() * (s.height - nH - PAD*2);
         const cand = { x, y: yPos, w: nW, h: nH };
 
-        if (!overlaps(cand, y)){
+        if (!overlapsRect(cand, yes)){
+          // choose farthest from YES
           const cX = x + nW/2, cY = yPos + nH/2;
-          const yCX = y.x + y.w/2, yCY = y.y + y.h/2;
+          const yCX = yes.x + yes.w/2, yCY = yes.y + yes.h/2;
           const d = (cX - yCX)**2 + (cY - yCY)**2;
           if (!best || d > best.d) best = { x, y: yPos, d };
         }
       }
 
       if (!best){
-        const xFallback = sideRight ? (s.width - nW - PAD) : PAD;
-        const yFallback = PAD + Math.random() * (s.height - nH - PAD*2);
-        best = { x: xFallback, y: yFallback };
+        // last fallback
+        best = { x: sideRight ? (s.width - nW - PAD) : PAD, y: PAD + Math.random() * (s.height - nH - PAD*2) };
       }
 
       return best;
     }
 
-    let noDetached = false;
-
     function runAway(){
       blocks++;
       tiny.textContent = `No attempts blocked: ${blocks} 😌`;
-      hint.textContent = "Hehe… nice try 😌💗";
+      hint.textContent = "Hehe… it’s shy 😌💗";
 
       showCuteMsg();
 
-      if (!noDetached) {
-        detachNoToAbsolute();
-        noDetached = true;
-      }
+      if (!noDetached) detachNoToAbsolute();
 
-      const spot = pickSpotOnSide(placeRightNext);
+      const spot = pickSpotOnSide(placeRightNext);  // ✅ alternates left/right away from YES
       placeRightNext = !placeRightNext;
       setAbsPos(noBtn, spot.x, spot.y);
     }
 
     function onYes(){
-      // remove buttons so success is never hidden
-      btnRow.style.display = "none";
-      success.style.display = "block";
+      btnRow.style.display = "none";     // ✅ remove both buttons
+      success.style.display = "block";   // ✅ show message clearly
       hint.textContent = "Awww… you picked YES 💘";
+
       startCelebration();
 
-      // little instant burst
-      for (let i = 0; i < 20; i++) spawnFloat(true);
+      // extra instant joy
+      for (let i = 0; i < 22; i++) spawnFloat(true);
       for (let i = 0; i < 6; i++) setTimeout(sparkBurst, i * 200);
     }
 
     yesBtn.addEventListener("click", onYes);
 
-    // Works on desktop + mobile
+    // Hover + tap friendly
     noBtn.addEventListener("pointerenter", runAway);
     noBtn.addEventListener("click", (e) => { e.preventDefault(); runAway(); });
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); runAway(); }, { passive:false });
