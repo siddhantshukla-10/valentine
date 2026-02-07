@@ -1,590 +1,181 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Will you be my valentine forever, bubu? 💘</title>
-  <meta name="description" content="A tiny playful valentine site. You can never say no 😈💘" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Will you be my valentine forever, Bubu? 💘</title>
 
-  <style>
-    :root {
-      --bg1: #ffdde1;
-      --bg2: #ee9ca7;
+<style>
+:root{
+  --bg1:#ffdde1; --bg2:#ee9ca7;
+  --card:rgba(255,255,255,.78);
+  --yes:#22c55e; --no:#ef4444;
+  --shadow:0 20px 60px rgba(0,0,0,.15);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; display:grid; place-items:center;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:
+    radial-gradient(1200px 800px at 20% 10%,var(--bg1),transparent 60%),
+    radial-gradient(1200px 800px at 80% 90%,var(--bg2),transparent 60%),
+    linear-gradient(135deg,#fff5f7,#ffe4e6);
+  overflow:hidden;
+}
 
-      --card: rgba(255,255,255,0.78);
-      --text: #1f1f1f;
+/* hearts */
+.hearts{position:fixed; inset:0; pointer-events:none; opacity:.35; z-index:1}
+.heart{position:absolute; font-size:22px; animation:float 10s linear infinite}
+@keyframes float{from{transform:translateY(120vh)}to{transform:translateY(-20vh)}}
 
-      --yes: #22c55e;
-      --no: #ef4444;
+/* stickers */
+.stickers{position:fixed; inset:0; pointer-events:none; z-index:2}
+.sticker{
+  position:fixed; width:160px;
+  background:rgba(255,255,255,.55);
+  border-radius:18px; padding:10px;
+  box-shadow:0 18px 45px rgba(0,0,0,.12);
+  transform:rotate(var(--rot));
+}
+.sticker img{width:100%; border-radius:14px}
 
-      --shadow: 0 20px 60px rgba(0,0,0,0.15);
-    }
+/* card */
+.card{
+  width:min(760px,calc(100vw - 32px));
+  background:var(--card);
+  border-radius:28px;
+  padding:28px;
+  box-shadow:var(--shadow);
+  z-index:4;
+  text-align:center;
+}
 
-    * { box-sizing: border-box; }
+.stage{
+  position:relative;
+  height:300px;
+  background:rgba(255,255,255,.55);
+  border-radius:22px;
+  overflow:hidden;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background:
-        radial-gradient(1200px 800px at 20% 10%, var(--bg1), transparent 60%),
-        radial-gradient(1200px 800px at 80% 90%, var(--bg2), transparent 60%),
-        radial-gradient(900px 650px at 50% 35%, rgba(255,105,180,0.18), transparent 65%),
-        linear-gradient(135deg, #fff5f7, #ffe4e6);
-      color: var(--text);
-      overflow: hidden;
-    }
+/* buttons */
+button{
+  position:absolute;
+  top:50%; transform:translateY(-50%);
+  border:0; border-radius:999px;
+  padding:14px 24px;
+  font-size:18px; font-weight:800;
+  cursor:pointer;
+  box-shadow:0 14px 30px rgba(0,0,0,.14);
+  white-space:nowrap;
+}
+#yesBtn{background:var(--yes); color:#fff}
+#noBtn{background:var(--no); color:#fff}
 
-    /* Floating hearts */
-    .hearts {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.35;
-      z-index: 1;
-    }
-    .heart {
-      position: absolute;
-      font-size: 22px;
-      animation: floatUp linear infinite;
-      transform: translateY(120vh);
-      user-select: none;
-      filter: drop-shadow(0 10px 16px rgba(255,45,85,0.12));
-    }
-    @keyframes floatUp {
-      from { transform: translateY(120vh) translateX(0) rotate(0deg); }
-      to   { transform: translateY(-20vh) translateX(40px) rotate(25deg); }
-    }
-
-    /* Stickers around page */
-    .stickers {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .sticker {
-      position: fixed;
-      width: 160px;               /* increased size */
-      border-radius: 18px;
-      padding: 10px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(255,255,255,0.75);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.12);
-      backdrop-filter: blur(7px);
-      transform: rotate(var(--rot));
-      opacity: 0.95;
-    }
-    .sticker img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 14px;
-    }
-    .sticker .fallback {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: 38px;
-      background: rgba(255, 182, 193, 0.25);
-      border: 1px dashed rgba(255, 105, 180, 0.45);
-      color: rgba(31,31,31,0.75);
-    }
-
-    /* Confetti + fireworks */
-    .confetti, .sparks {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0;
-      transition: opacity 350ms ease;
-    }
-    .conf {
-      position: absolute;
-      width: 10px;
-      height: 14px;
-      border-radius: 4px;
-      transform: translateY(-10vh) rotate(0deg);
-      animation: confFall linear forwards;
-      opacity: 0.95;
-    }
-    @keyframes confFall {
-      to { transform: translateY(110vh) rotate(720deg); }
-    }
-    .spark {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      animation: sparkPop 900ms ease-out forwards;
-      box-shadow: 0 0 18px rgba(255,255,255,0.7);
-    }
-    @keyframes sparkPop {
-      0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
-      15% { opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
-    }
-
-    /* Card */
-    .card {
-      width: min(760px, calc(100vw - 32px));
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.7);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      padding: 28px;
-      backdrop-filter: blur(12px);
-      position: relative;
-      z-index: 4;
-    }
-
-    .title {
-      font-size: clamp(28px, 4vw, 46px);
-      line-height: 1.08;
-      margin: 0 0 10px;
-      letter-spacing: -0.02em;
-      text-align: center;
-    }
-    .subtitle {
-      margin: 0 0 18px;
-      text-align: center;
-      font-size: 16px;
-      opacity: 0.85;
-      min-height: 22px;
-    }
-
-    /* Stage */
-    .stage {
-      position: relative;
-      height: 280px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(255,255,255,0.7);
-      overflow: hidden;
-    }
-
-    /* Buttons are absolute from the start (fixes disappearing) */
-    button {
-      appearance: none;
-      border: 0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.12s ease, filter 0.12s ease;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.14);
-      user-select: none;
-      white-space: nowrap;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    button:active { transform: translateY(-50%) scale(0.98); }
-    button:hover { filter: brightness(1.02); }
-
-    #yesBtn { background: var(--yes); color: white; z-index: 6; }
-    #noBtn  { background: var(--no);  color: white; z-index: 7; }
-
-    .hint {
-      margin-top: 16px;
-      text-align: center;
-      opacity: 0.75;
-      font-size: 14px;
-      min-height: 18px;
-    }
-    .tiny {
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.65;
-      text-align: center;
-    }
-
-    .success {
-      display: none;
-      text-align: center;
-      padding: 22px 10px 0;
-    }
-    .success h2 {
-      margin: 10px 0 6px;
-      font-size: 30px;
-    }
-    .success p {
-      margin: 0;
-      opacity: 0.92;
-      font-size: 16px;
-      line-height: 1.55;
-    }
-    .badge {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      margin-top: 14px;
-      background: rgba(34,197,94,0.15);
-      border: 1px solid rgba(34,197,94,0.35);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-    }
-
-    .footer {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.6;
-    }
-
-    @media (max-width: 520px) {
-      .sticker { width: 120px; padding: 8px; }
-      button { font-size: 16px; padding: 12px 18px; }
-      .stage { height: 320px; }
-    }
-  </style>
+.success{display:none; padding-top:20px}
+.confetti,.sparks{position:fixed; inset:0; pointer-events:none; z-index:6; opacity:0}
+.conf{position:absolute; width:10px; height:14px; animation:fall 3s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.spark{position:absolute; width:6px; height:6px; border-radius:50%; animation:pop .9s forwards}
+@keyframes pop{to{transform:scale(2.5); opacity:0}}
+</style>
 </head>
 
 <body>
-  <div class="hearts" id="hearts"></div>
-  <div class="stickers" id="stickers"></div>
-  <div class="confetti" id="confetti"></div>
-  <div class="sparks" id="sparks"></div>
 
-  <main class="card">
-    <h1 class="title">Will you be my valentine forever, Bubu? 💘</h1>
-    <p class="subtitle" id="subtitle">Pick wisely… because “No” is shy today 😈</p>
+<div class="hearts" id="hearts"></div>
+<div class="stickers" id="stickers"></div>
+<div class="confetti" id="confetti"></div>
+<div class="sparks" id="sparks"></div>
 
-    <section class="stage" id="stage">
-      <button id="yesBtn">Yes 💚</button>
-      <button id="noBtn">No 🙃</button>
+<main class="card">
+  <h1>Will you be my valentine forever, Bubu? 💘</h1>
+  <p id="hint">Hover “No” if you dare 👀</p>
 
-      <div class="success" id="success">
-        <div style="font-size:58px;">🥹💘✨</div>
-        <h2>Yayyyyy! It’s a forever date 💍</h2>
-        <p>
-          Okay Bubu, now you’re officially stuck with me 😌<br />
-          Hugs + kisses subscription activated for life 🫶
-        </p>
-        <div class="badge">✅ “Yes” locked in forever</div>
-      </div>
-    </section>
+  <section class="stage" id="stage">
+    <button id="yesBtn">Yes 💚</button>
+    <button id="noBtn">No 🙃</button>
 
-    <div class="hint" id="hint">Hover “No” if you dare 👀</div>
-  </main>
+    <div class="success" id="success">
+      <div style="font-size:60px">🥹💘✨</div>
+      <h2>Yayyy! Forever it is 💍</h2>
+      <p>You’re officially stuck with me 😌</p>
+    </div>
+  </section>
+</main>
 
-  <script>
-    /********************
-     * 1) Floating hearts
-     ********************/
-    const heartsWrap = document.getElementById("hearts");
-    const heartEmojis = ["💘","💖","💗","💓","💞","💕","❤️","🩷","✨","🌸"];
-    let heartFastMode = false;
-    let heartInterval = null;
+<script>
+/* hearts */
+const hearts=document.getElementById("hearts");
+["💘","💖","💗","💓","💕","🩷"].forEach((e,i)=>{
+  const h=document.createElement("div");
+  h.className="heart"; h.textContent=e;
+  h.style.left=Math.random()*100+"vw";
+  h.style.animationDuration=6+Math.random()*8+"s";
+  hearts.appendChild(h);
+});
 
-    function makeHeart() {
-      const el = document.createElement("div");
-      el.className = "heart";
-      el.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-      el.style.left = Math.random() * 100 + "vw";
-      el.style.animationDuration = (heartFastMode ? (3.6 + Math.random() * 4.2) : (6 + Math.random() * 10)) + "s";
-      el.style.fontSize = (16 + Math.random() * 22) + "px";
-      el.style.opacity = (0.22 + Math.random() * 0.62);
-      el.style.animationDelay = (-Math.random() * 10) + "s";
-      heartsWrap.appendChild(el);
-      setTimeout(() => el.remove(), 17000);
-    }
+/* stickers (NON overlapping) */
+const pos=[
+  {t:20,l:20,r:-8},{t:20,r:20,r2:8},
+  {b:20,l:20,r:10},{b:20,r:20,r2:-10},
+  {t:140,l:20,r:6},{t:140,r:20,r2:-6},
+  {b:140,l:20,r:-6},{b:140,r:20,r2:6},
+  {t:60,l:"45%",r:8},{b:60,l:"45%",r:-8}
+];
+pos.forEach((p,i)=>{
+  const d=document.createElement("div");
+  d.className="sticker";
+  d.style.setProperty("--rot",(p.r||p.r2)+"deg");
+  Object.assign(d.style,{
+    top:p.t+"px", bottom:p.b+"px",
+    left:p.l, right:p.r?null:p.r2
+  });
+  d.innerHTML=`<img src="assets/${String(i+1).padStart(2,"0")}.webp">`;
+  stickers.appendChild(d);
+});
 
-    for (let i = 0; i < 26; i++) makeHeart();
-    heartInterval = setInterval(makeHeart, 600);
+/* YES / NO logic */
+const stage=document.getElementById("stage");
+const yes=document.getElementById("yesBtn");
+const no=document.getElementById("noBtn");
+const success=document.getElementById("success");
+const hint=document.getElementById("hint");
 
-    /********************
-     * 2) Stickers (10 photos) - slanted, cute, bigger
-     * IMPORTANT:
-     * Put your images in repo under /assets and set these names accordingly.
-     ********************/
-    const stickersWrap = document.getElementById("stickers");
-    const STICKER_URLS = [
-      "assets/01.webp",
-      "assets/02.webp",
-      "assets/03.webp",
-      "assets/04.webp",
-      "assets/05.jpg",
-      "assets/06.webp",
-      "assets/07.webp",
-      "assets/08.webp",
-      "assets/09.webp",
-      "assets/10.webp",
-    ];
+const msgs=["Pick Yes 🥺","Awww 💞","Hehe 😜","Come on Bubu 🩷"];
+let right=true;
 
-    const positions = [
-      { top:"14px", left:"14px", rot:"-12deg" },
-      { top:"14px", right:"14px", rot:"12deg" },
-      { bottom:"14px", left:"14px", rot:"10deg" },
-      { bottom:"14px", right:"14px", rot:"-12deg" },
+function init(){
+  const w=stage.clientWidth;
+  yes.style.left=(w/2 - yes.offsetWidth - 10)+"px";
+  no.style.left=(w/2 + 10)+"px";
+}
+window.onload=init; window.onresize=init;
 
-      { top:"20px", left:"calc(50% - 80px)", rot:"7deg" },
-      { bottom:"20px", left:"calc(50% - 80px)", rot:"-7deg" },
+function runAway(){
+  const s=stage.clientWidth;
+  const pad=12;
+  const y=no.offsetHeight;
+  no.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  setTimeout(()=>no.textContent="No 🙃",1000);
 
-      { top:"120px", left:"18px", rot:"8deg" },
-      { top:"120px", right:"18px", rot:"-8deg" },
+  const x= right
+    ? s - no.offsetWidth - pad
+    : pad;
+  const top=pad+Math.random()*(stage.clientHeight-y-pad*2);
+  no.style.left=x+"px";
+  no.style.top=top+"px";
+  right=!right;
+}
 
-      { bottom:"120px", left:"18px", rot:"-6deg" },
-      { bottom:"120px", right:"18px", rot:"6deg" },
-    ];
+no.addEventListener("mouseenter",runAway);
+no.addEventListener("click",e=>{e.preventDefault();runAway()});
 
-    STICKER_URLS.forEach((src, i) => {
-      const frame = document.createElement("div");
-      frame.className = "sticker";
-      const p = positions[i % positions.length];
-      frame.style.setProperty("--rot", p.rot);
-      Object.keys(p).forEach(k => { if (k !== "rot") frame.style[k] = p[k]; });
-
-      const img = document.createElement("img");
-      img.src = src;
-      img.alt = "cute photo";
-      img.loading = "lazy";
-
-      const fallback = document.createElement("div");
-      fallback.className = "fallback";
-      fallback.textContent = "💞";
-
-      img.onerror = () => {
-        // DO NOT remove the frame (so you don't end up with only 1 photo)
-        img.style.display = "none";
-        frame.appendChild(fallback);
-      };
-
-      frame.appendChild(img);
-      stickersWrap.appendChild(frame);
-    });
-
-    /********************
-     * 3) Confetti + fireworks celebration
-     ********************/
-    const confettiWrap = document.getElementById("confetti");
-    const sparksWrap = document.getElementById("sparks");
-    let celebrateOn = false;
-    let confInt = null;
-    let sparkInt = null;
-
-    function spawnConfetti() {
-      if (!celebrateOn) return;
-      const c = document.createElement("div");
-      c.className = "conf";
-      c.style.left = (Math.random() * 100) + "vw";
-      c.style.animationDuration = (2.4 + Math.random() * 2.8) + "s";
-      const hues = [330, 345, 10, 45, 170, 200, 280];
-      const h = hues[Math.floor(Math.random() * hues.length)];
-      c.style.background = `hsl(${h} 90% 70%)`;
-      confettiWrap.appendChild(c);
-      setTimeout(() => c.remove(), 6000);
-    }
-
-    function sparkBurst() {
-      if (!celebrateOn) return;
-      const x = Math.random() * window.innerWidth;
-      const y = Math.random() * window.innerHeight * 0.85;
-      const count = 10 + Math.floor(Math.random() * 12);
-      const hues = [330, 345, 10, 45, 170, 200, 280];
-
-      for (let i = 0; i < count; i++) {
-        const s = document.createElement("div");
-        s.className = "spark";
-        s.style.left = x + "px";
-        s.style.top = y + "px";
-        const h = hues[Math.floor(Math.random() * hues.length)];
-        s.style.background = `hsl(${h} 90% 70%)`;
-        sparksWrap.appendChild(s);
-        setTimeout(() => s.remove(), 950);
-      }
-    }
-
-    function startCelebration() {
-      celebrateOn = true;
-      confettiWrap.style.opacity = "1";
-      sparksWrap.style.opacity = "1";
-
-      // more hearts
-      heartFastMode = true;
-      clearInterval(heartInterval);
-      heartInterval = setInterval(makeHeart, 220);
-      for (let i = 0; i < 30; i++) makeHeart();
-
-      // confetti + fireworks loops
-      for (let i = 0; i < 24; i++) setTimeout(spawnConfetti, i * 80);
-      confInt = setInterval(spawnConfetti, 120);
-
-      for (let i = 0; i < 8; i++) setTimeout(sparkBurst, i * 180);
-      sparkInt = setInterval(sparkBurst, 520);
-    }
-
-    /********************
-     * 4) YES/NO Logic (guaranteed: NO never disappears, never overlaps YES)
-     ********************/
-    const stage = document.getElementById("stage");
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn = document.getElementById("noBtn");
-    const success = document.getElementById("success");
-    const hint = document.getElementById("hint");
-    const tiny = document.getElementById("tiny");
-
-    let blocks = 0;
-    let preferRight = true;
-    let cooldownUntil = 0;
-    let msgTimer = null;
-
-    const originalNoText = "No 🙃";
-    const cuteMsgs = [
-      "Pick Yes na 🥺",
-      "Awww… 💞",
-      "Hehe nope 😜",
-      "Try again 😌",
-      "Yes looks cute 🩷",
-      "Don’t be mean 🙈",
-      "Come on bubu 🥹"
-    ];
-
-    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
-
-    function setInitialPositions() {
-      // place YES left of center, NO right of center, side by side
-      const rect = stage.getBoundingClientRect();
-
-      // Force measure
-      yesBtn.style.left = "0px";
-      noBtn.style.left = "0px";
-
-      const yesW = yesBtn.offsetWidth;
-      const noW = noBtn.offsetWidth;
-      const gap = 16;
-
-      const total = yesW + gap + noW;
-      const startX = (rect.width - total) / 2;
-
-      yesBtn.style.left = clamp(startX, 12, rect.width - yesW - 12) + "px";
-      noBtn.style.left  = clamp(startX + yesW + gap, 12, rect.width - noW - 12) + "px";
-
-      // lock NO width so cute text doesn’t resize it
-      noBtn.style.minWidth = noW + "px";
-      noBtn.style.textAlign = "center";
-    }
-
-    function showCuteMsg() {
-      const msg = cuteMsgs[Math.floor(Math.random() * cuteMsgs.length)];
-      noBtn.textContent = msg;
-      if (msgTimer) clearTimeout(msgTimer);
-      msgTimer = setTimeout(() => { noBtn.textContent = originalNoText; }, 1000);
-    }
-
-    function rectRelativeToStage(el) {
-      const s = stage.getBoundingClientRect();
-      const r = el.getBoundingClientRect();
-      return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height };
-    }
-
-    function overlaps(a, b, pad) {
-      return !(
-        a.x + a.w + pad <= b.x ||
-        b.x + b.w + pad <= a.x ||
-        a.y + a.h + pad <= b.y ||
-        b.y + b.h + pad <= a.y
-      );
-    }
-
-    function runNoAway() {
-      const now = Date.now();
-      if (now < cooldownUntil) return;
-      cooldownUntil = now + 160;
-
-      blocks++;
-      tiny.textContent = `No attempts blocked: ${blocks} 😌`;
-      hint.textContent = "Nice try. 😏";
-      showCuteMsg();
-
-      const s = stage.getBoundingClientRect();
-      const yes = rectRelativeToStage(yesBtn);
-
-      const nW = noBtn.offsetWidth;
-      const nH = noBtn.offsetHeight;
-
-      const PAD = 12;
-      const SAFE = 26; // safe padding so NO never overlaps YES
-      const FAR = 110; // ensures it goes far left/right
-
-      let minX, maxX;
-
-      if (preferRight) {
-        minX = yes.x + yes.w + FAR;
-        maxX = s.width - nW - PAD;
-        if (minX > maxX) { minX = PAD; maxX = s.width - nW - PAD; }
-      } else {
-        minX = PAD;
-        maxX = yes.x - nW - FAR;
-        if (minX > maxX) { minX = PAD; maxX = s.width - nW - PAD; }
-      }
-
-      let best = null;
-
-      for (let i = 0; i < 90; i++) {
-        const x = minX + Math.random() * (maxX - minX);
-        const y = PAD + Math.random() * (s.height - nH - PAD * 2);
-        const cand = { x, y, w: nW, h: nH };
-        if (!overlaps(cand, yes, SAFE)) { best = cand; break; }
-      }
-
-      if (!best) {
-        best = {
-          x: preferRight ? (s.width - nW - PAD) : PAD,
-          y: PAD + Math.random() * (s.height - nH - PAD * 2),
-          w: nW, h: nH
-        };
-      }
-
-      preferRight = !preferRight;
-
-      // Prevent hover-loop issues: temporarily disable pointer events while moving
-      noBtn.style.pointerEvents = "none";
-      requestAnimationFrame(() => {
-        noBtn.style.left = clamp(best.x, PAD, s.width - nW - PAD) + "px";
-        noBtn.style.top  = clamp(best.y, PAD, s.height - nH - PAD) + "px";
-        setTimeout(() => { noBtn.style.pointerEvents = ""; }, 120);
-      });
-    }
-
-    function onYes() {
-      yesBtn.style.display = "none";
-      noBtn.style.display = "none";
-      success.style.display = "block";
-      hint.textContent = "Good choice 😌💘";
-      startCelebration();
-    }
-
-    // init + events
-    window.addEventListener("load", () => {
-      setInitialPositions();
-      // place NO vertically centered too
-      noBtn.style.top = "50%";
-      yesBtn.style.top = "50%";
-    });
-    window.addEventListener("resize", () => {
-      // reset on resize so they stay side-by-side centered
-      yesBtn.style.display = "";
-      noBtn.style.display = "";
-      success.style.display = "none";
-      noBtn.textContent = originalNoText;
-      noBtn.style.top = "50%";
-      yesBtn.style.top = "50%";
-      setInitialPositions();
-    });
-
-    yesBtn.addEventListener("click", onYes);
-    noBtn.addEventListener("mouseenter", runNoAway);
-    noBtn.addEventListener("click", (e) => { e.preventDefault(); runNoAway(); });
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); runNoAway(); }, { passive:false });
-  </script>
+yes.onclick=()=>{
+  yes.style.display=no.style.display="none";
+  success.style.display="block";
+  hint.textContent="Good choice 😌💘";
+};
+</script>
 </body>
 </html>
